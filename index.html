@@ -101,6 +101,14 @@ label{font-size:13px;color:#8e8e93;display:block;margin-bottom:5px;font-weight:5
 .yn-btn{padding:7px 13px;font-size:13px;font-weight:700;border-radius:9px;border:1.5px solid #c7c7cc;background:#fff;cursor:pointer;color:#1c1c1e}
 .yn-btn.yes{border-color:#34c759;background:#34c759;color:#fff}
 .yn-btn.no{border-color:#ff3b30;background:#ff3b30;color:#fff}
+.yn-check-wrap{display:flex;gap:8px;flex-wrap:wrap}
+.yn-check{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 12px;border:1.5px solid #c7c7cc;border-radius:10px;background:#fff;cursor:pointer;
+  font-size:14px;font-weight:600;color:#1c1c1e;
+}
+.yn-check input{width:18px;height:18px}
+
 .shift-table{width:100%;border-collapse:collapse;font-size:11px}
 .shift-table th{background:#f2f2f7;padding:5px 3px;text-align:center;font-weight:700;border:1px solid #e5e5ea;font-size:10px}
 .shift-table td{padding:4px 3px;text-align:center;border:1px solid #f2f2f7;vertical-align:middle}
@@ -488,6 +496,66 @@ body{
   border:1px solid rgba(23,57,74,.12);background:#f3f4f6;
 }
 
+
+.pb-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.pb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(23,57,74,.12);border-radius:12px;background:#fff}
+.pb-item input{width:18px;height:18px;flex:0 0 auto}
+
+.mc-section{display:grid;gap:12px;margin-top:4px}
+.mc-row{
+  display:grid;
+  grid-template-columns:minmax(140px, 1fr) auto;
+  align-items:center;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(23,57,74,.08);
+}
+.mc-row:last-child{border-bottom:none}
+.mc-label{
+  font-size:14px;
+  font-weight:600;
+  color:#17394A;
+  line-height:1.35;
+}
+.mc-options{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  justify-content:flex-end;
+}
+.mc-option{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:14px;
+  color:#17394A;
+  white-space:nowrap;
+}
+.mc-option input{
+  width:16px;
+  height:16px;
+}
+.mc-extra{
+  margin:8px 0 2px 0;
+  padding:10px 12px;
+  background:#f7fbfa;
+  border:1px solid #d6e4e1;
+  border-radius:12px;
+}
+
+.mc-inline-date{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mc-inline-date .mc-option{font-size:13px}
+
+.mc-flag{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:#fff4e5;
+  border:1px solid #ffb84d;
+  color:#8a4b00;
+  font-size:13px;
+  font-weight:600;
+}
 </style>
 </head>
 <body class="startup-lock">
@@ -931,7 +999,7 @@ function renderCatInfo(){
   const hc=c.healthCheck;const dmCol=DC[c.demeanour]||'';
   h+='<div class="card" style="margin-bottom:12px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div style="position:relative">'+avHtml(c,64,20)+'<div class="cam-btn" onclick="_pendPhotoCat=\''+c.id+'\';$(\'cam-profile\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#e8f4ff" stroke-width="2.5"><circle cx="12" cy="13" r="4"/><path d="M5 7h2l2-3h6l2 3h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg></div></div><div style="flex:1"><div style="font-size:18px;font-weight:700">'+esc(c.name)+(c.demeanour?' <span style="color:'+dmCol+';font-weight:700;font-size:15px">'+DL[c.demeanour]+'</span>':'')+'</div>'+(ownerFull(c)?'<div style="font-size:13px;font-style:italic;color:#555">'+esc(ownerFull(c))+'</div>':'')+'<div style="font-size:13px;color:#8e8e93">'+esc(c.breed)+' &middot; '+esc(c.age)+' yrs</div>'+([c.ownerPhone,c.ownerEmail].filter(Boolean).length?'<div style="font-size:12px;color:#8e8e93">'+esc([c.ownerPhone,c.ownerEmail].filter(Boolean).join(' &middot; '))+'</div>':'')+'</div></div><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><td style="color:#8e8e93;padding:4px 0;width:105px">Food</td><td style="padding:4px 0;font-weight:500">'+esc((c.foodTypes||[]).join(', '))+(c.foodNote?' &mdash; '+esc(c.foodNote):'')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Notes</td><td style="padding:4px 0">'+esc(c.notes||'None')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Status</td><td style="padding:4px 0;font-weight:600">'+(c.admitted?'<span style="color:#1b5e20">Admitted</span>':'Pending')+'</td></tr>'+(c.admittedAt?'<tr><td style="color:#8e8e93;padding:4px 0">Admitted</td><td style="padding:4px 0">'+fmtDT(c.admittedAt)+'</td></tr>':'')+'</table></div>';
   if(hc&&hc.completed){
-    h+='<div class="sec">Pre-boarding health check</div><div class="card" style="margin-bottom:12px"><table style="width:100%;font-size:13px;border-collapse:collapse">'+[['Admission weight',hc.weight+'kg'],['Demeanour',c.demeanour?'<span style="color:'+dmCol+';font-weight:700">'+DL[c.demeanour]+'</span>':'&mdash;'],['Fleas',hc.fleas?'Yes':'No'],['Flea treated',hc.fleaTreated?'Yes':'No'],['Wormed',hc.wormed?'Yes':'No'],['Health concerns',esc(hc.healthConcerns)],['Microchip',hc.microchip==='none'?'No microchip':esc(hc.microchip)],['Dental',DENTAL_DESC[hc.dental]||'Grade '+hc.dental],['Carrier description',esc(((hc.carrier||{}).description)||'')||'&mdash;'],['Personal belongings',esc(((hc.belongings||{}).description)||'')||'&mdash;']].map(([k,v])=>'<tr><td style="color:#8e8e93;padding:4px 0;width:105px;vertical-align:top">'+k+'</td><td style="padding:4px 0;font-weight:500">'+v+'</td></tr>').join('')+'</table>'+((((hc.carrier||{}).photo)||((hc.belongings||{}).photo))?'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">'+(((hc.carrier||{}).photos&&hc.carrier.photos.length?hc.carrier.photos:[((hc.carrier||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Carrier photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Carrier photo '+(i+1)+'"></div>').join(''))+(((hc.belongings||{}).photos&&hc.belongings.photos.length?hc.belongings.photos:[((hc.belongings||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Belongings photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Belongings photo '+(i+1)+'"></div>').join(''))+'</div>':'')+'</div>';
+    h+='<div class="sec">Pre-boarding health check</div><div class="card" style="margin-bottom:12px">'+((hc.fleaAlertOpen)?'<div class="mc-flag" style="margin-bottom:10px">⚠️ Flea alert active — keep visible until resolved.</div>':'')+'<table style="width:100%;font-size:13px;border-collapse:collapse">'+[['Admission weight',hc.weight+'kg'],['Demeanour',c.demeanour?'<span style="color:'+dmCol+';font-weight:700">'+DL[c.demeanour]+'</span>':'&mdash;'],['Fleas',hc.fleas?'Yes':'No'],['Flea alert',hc.fleaAlertOpen?'Active':'None'],['Flea treated',hc.fleaTreated?'Yes':'No'],['Flea treatment date',hc.fleaDateUnknown?'Unknown':(esc(hc.fleaDate||'')||'&mdash;')],['Wormed',hc.wormed?'Yes':'No'],['Worming date',hc.wormDateUnknown?'Unknown':(esc(hc.wormDate||'')||'&mdash;')],['Health concerns',esc(hc.healthConcerns)],['Microchip',hc.microchip==='none'?'No microchip':esc(hc.microchip)],['Dental',DENTAL_DESC[hc.dental]||'Grade '+hc.dental],['Carrier description',esc(((hc.carrier||{}).description)||'')||'&mdash;'],['Personal belongings',esc(((hc.belongings||{}).description)||'')||'&mdash;']].map(([k,v])=>'<tr><td style="color:#8e8e93;padding:4px 0;width:105px;vertical-align:top">'+k+'</td><td style="padding:4px 0;font-weight:500">'+v+'</td></tr>').join('')+'</table>'+((((hc.carrier||{}).photo)||((hc.belongings||{}).photo))?'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">'+(((hc.carrier||{}).photos&&hc.carrier.photos.length?hc.carrier.photos:[((hc.carrier||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Carrier photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Carrier photo '+(i+1)+'"></div>').join(''))+(((hc.belongings||{}).photos&&hc.belongings.photos.length?hc.belongings.photos:[((hc.belongings||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Belongings photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Belongings photo '+(i+1)+'"></div>').join(''))+'</div>':'')+'</div>';
   }
   if(c.medications&&c.medications.length){
     h+='<div class="sec">Medications</div><div class="card" style="padding:4px 13px;margin-bottom:12px">';
@@ -1107,99 +1175,200 @@ window.removeHealthPhoto=id=>{const c=cat(id);if(!c)return;c.photo=null;sv();clo
 function healthCheckModal(catId){
   ensureHcMediaDraft(catId);
   const c=cat(catId),hc=c.healthCheck||{},meds=hcDraftMeds(catId);
-  return '<div class="sec" style="margin-bottom:4px">Pre-boarding health check</div><div style="font-size:12px;color:#8e8e93;margin-bottom:12px">'+esc(c.name)+' &middot; All fields required</div><div style="display:grid;gap:11px"><div><label>Admission weight (kg) *</label><input id="hc-wt" type="number" step="0.01" placeholder="e.g. 4.5" value="'+(hc.weight||'')+'"></div><div><label>Demeanour *</label><div style="display:flex;gap:7px;margin-top:5px">'+['friendly','anxious','caution'].map(d=>'<div class="demean-btn '+(hc.demeanour===d?'sel-'+d:'')+'" onclick="selDemean(\''+d+'\')" id="db-'+d+'"><span style="font-size:20px">&#128049;</span><span style="font-size:11px;font-weight:700;color:'+DC[d]+'">'+DL[d]+'</span></div>').join('')+'</div><input type="hidden" id="hc-demean" value="'+(hc.demeanour||'')+'"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">'+['fleas','flea-tx','wormed'].map((id2,i)=>'<div><label>'+['Fleas?','Flea treated?','Wormed?'][i]+'</label><select id="hc-'+id2+'"><option value="">Select</option><option value="yes" '+([hc.fleas,hc.fleaTreated,hc.wormed][i]===true?'selected':'')+'>Yes</option><option value="no" '+([hc.fleas,hc.fleaTreated,hc.wormed][i]===false?'selected':'')+'>No</option></select></div>').join('')+'</div><div><label>Health concerns *</label><textarea id="hc-concerns" rows="2" placeholder="None, or describe&#8230;" style="resize:vertical">'+esc(hc.healthConcerns||'')+'</textarea></div><div><label>Microchip</label><select id="hc-micro-type" onchange="toggleMicroInput()" style="margin-bottom:6px"><option value="">Select</option><option value="yes" '+(hc.microchip&&hc.microchip!=='none'?'selected':'')+'>Yes &mdash; add number</option><option value="none" '+(hc.microchip==='none'?'selected':'')+'>No microchip</option></select><input id="hc-micro-num" placeholder="Microchip number" value="'+(hc.microchip&&hc.microchip!=='none'?esc(hc.microchip):'')+'" style="'+(hc.microchip&&hc.microchip!=='none'?'':'display:none')+'"></div><div><label>Dental grade *</label><div style="font-size:11px;color:#8e8e93;margin-bottom:7px">0 = healthy &middot; 4 = severe</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">'+[0,1,2,3,4].map(g=>'<div class="dental-btn '+(hc.dental===g?'sel':'')+'" onclick="selDental('+g+')" id="dg-'+g+'"><div style="font-size:17px;font-weight:700">'+g+'</div><div style="font-size:8px;color:#8e8e93;margin-top:2px">'+['None','Mild','Mod.','Heavy','Severe'][g]+'</div></div>').join('')+'</div><input type="hidden" id="hc-dental" value="'+(hc.dental!==undefined?hc.dental:'')+'"></div><div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><label style="margin:0">Medications</label><button onclick="addHcMed(\''+catId+'\')" class="btn" style="padding:4px 10px;font-size:12px">+ Add</button></div><div style="font-size:12px;color:#8e8e93;margin-bottom:8px">Add medication inline. Choose the shift it belongs to and it will appear in that shift monitoring log and history.</div>'+(meds.length?meds.map((m,i)=>'<div style="background:#f7fbfa;border:1px solid #d6e4e1;border-radius:12px;padding:10px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;color:#17394A">Medication '+(i+1)+'</div><button onclick="removeHcMed(\''+catId+'\',\''+m.id+'\')" style="color:#ff6f61;background:none;border:none;font-size:18px;cursor:pointer">&times;</button></div><label style="margin-bottom:6px">Medication details</label><textarea id="hc-med-details-'+m.id+'" rows="3" placeholder="e.g. Gabapentin 50mg capsule — give with food" style="resize:vertical;margin-bottom:8px">'+esc(m.details||(((m.name||'')+((m.dose||'')?' — '+m.dose:'')).trim()))+'</textarea><div><label>Administer at shift</label><div style="display:flex;gap:10px;margin-top:5px;margin-bottom:8px">'+['AM','PM'].map(s=>'<div class="cb-row" onclick="toggleHcMedShift(\''+catId+'\',\''+m.id+'\',\''+s+'\')" style="cursor:pointer"><div class="cb-box '+((m.shifts||[]).includes(s)?'checked':'')+'" id="hc-med-cb-'+m.id+'-'+s+'">'+((m.shifts||[]).includes(s)?'✓':s)+'</div><span style="font-size:14px">'+s+' shift</span></div>').join('')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>Start</label><input id="hc-med-start-'+m.id+'" type="date" value="'+(m.startDate||c.checkIn||tod())+'"></div><div><label>Until</label><input id="hc-med-end-'+m.id+'" type="date" value="'+(m.endDate||c.checkOut||tod())+'"></div></div><input id="hc-med-notes-'+m.id+'" placeholder="Notes (optional)" value="'+esc(m.notes||'')+'" style="margin-top:8px"></div>').join(''):'<div class="helper" style="margin-top:0">No medications added.</div>')+'</div></div><div class="sec" style="margin-top:14px">Carrier description</div><div class="card" style="margin-bottom:12px"><label>Carrier description</label><textarea id="hc-carrier-desc" rows="3" placeholder="Describe the carrier, condition, cleanliness, bedding, labels, damage, odour, or anything important..." style="resize:vertical">'+esc(((hc.carrier&&hc.carrier.description)||''))+'</textarea><div id="hc-carrier-photos" class="hc-photo-grid">'+((((cat(catId)||{})._hcMediaDraft||{}).carrier||{}).photos||[]).map((p,i)=>'<div class="hc-photo-tile"><img src="'+p+'" alt="Carrier photo '+(i+1)+'"><button type="button" class="hc-photo-delete" onclick="clearHcExtraPhoto(\\\''+catId+'\\\',\\\'carrier\\\','+i+')">×</button></div>').join('')+'<label class="hc-photo-add" title="Add carrier photo">+<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setHcExtraPhoto(\''+catId+'\',\'carrier\',this.files&&this.files[0]);this.value=\'\'"></label></div><div class="helper">Attach a photo from camera roll or take a new photo.</div><div class="sec" style="margin-top:14px">Personal belongings</div><div class="card" style="margin-bottom:12px"><label>Personal belongings</label><textarea id="hc-belongings-desc" rows="3" placeholder="List belongings brought in, such as food, toys, bedding, medication, bowls, or other items..." style="resize:vertical">'+esc(((hc.belongings&&hc.belongings.description)||''))+'</textarea><div id="hc-belongings-photos" class="hc-photo-grid">'+((((cat(catId)||{})._hcMediaDraft||{}).belongings||{}).photos||[]).map((p,i)=>'<div class="hc-photo-tile"><img src="'+p+'" alt="Belongings photo '+(i+1)+'"><button type="button" class="hc-photo-delete" onclick="clearHcExtraPhoto(\\\''+catId+'\\\',\\\'belongings\\\','+i+')">×</button></div>').join('')+'<label class="hc-photo-add" title="Add belongings photo">+<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setHcExtraPhoto(\''+catId+'\',\'belongings\',this.files&&this.files[0]);this.value=\'\'"></label></div><div class="helper">Attach a photo from camera roll or take a new photo.</div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveHealthCheck(\''+catId+'\')" style="font-size:15px;font-weight:700;padding:10px 20px">Save &amp; admit</button></div>';
+  return '<div class="sec" style="margin-bottom:4px">Pre-boarding health check</div><div style="font-size:12px;color:#8e8e93;margin-bottom:12px">'+esc(c.name)+' &middot; All fields required</div><div style="display:grid;gap:11px"><div><label>Admission weight (kg) *</label><input id="hc-wt" type="number" step="0.01" placeholder="e.g. 4.5" value="'+(hc.weight||'')+'"></div><div><label>Demeanour *</label><div style="display:flex;gap:7px;margin-top:5px">'+['friendly','anxious','caution'].map(d=>'<div class="demean-btn '+(hc.demeanour===d?'sel-'+d:'')+'" onclick="selDemean(\''+d+'\')" id="db-'+d+'"><span style="font-size:20px">&#128049;</span><span style="font-size:11px;font-weight:700;color:'+DC[d]+'">'+DL[d]+'</span></div>').join('')+'</div><input type="hidden" id="hc-demean" value="'+(hc.demeanour||'')+'"></div><div class="mc-section"><div class="mc-row"><div class="mc-label">Fleas present?</div><div class="mc-options"><label class="mc-option"><input type="radio" name="hc-fleas-radio" onclick="setFleasPresentValue(&quot;yes&quot;)" '+(hc.fleas===true?'checked':'')+'>Yes</label><label class="mc-option"><input type="radio" name="hc-fleas-radio" onclick="setFleasPresentValue(&quot;no&quot;)" '+(hc.fleas===false?'checked':'')+'>No</label></div></div><input type="hidden" id="hc-fleas" value="'+(hc.fleas===true?'yes':hc.fleas===false?'no':'')+'"><div id="hc-fleas-flag" class="mc-flag" style="display:'+(hc.fleas===true?'block':'none')+'">'+(hc.fleas===true?(hc.fleaTreated===true?'⚠️ Fleas present — alert remains until resolved.':'⚠️ Fleas present — unresolved flea alert.'):'')+'</div><div class="mc-row"><div class="mc-label">Flea treated?</div><div class="mc-options"><label class="mc-option"><input type="radio" name="hc-flea-tx-radio" onclick="setFleaTreatedValue(&quot;yes&quot;)" '+(hc.fleaTreated===true?'checked':'')+'>Yes</label><label class="mc-option"><input type="radio" name="hc-flea-tx-radio" onclick="setFleaTreatedValue(&quot;no&quot;)" '+(hc.fleaTreated===false?'checked':'')+'>No</label></div></div><input type="hidden" id="hc-flea-tx" value="'+(hc.fleaTreated===true?'yes':hc.fleaTreated===false?'no':'')+'"><div class="mc-extra"><label>Date treated</label><div class="mc-inline-date"><input id="hc-flea-date" type="date" onchange="updateFleaAlert()" value="'+esc(hc.fleaDate||((hc.fleaTreated===true && !hc.fleaDate && !hc.fleaDateUnknown)?tod():''))+'" '+(hc.fleaDateUnknown?'disabled':'')+'><label class="mc-option"><input id="hc-flea-date-unknown" type="checkbox" onclick="toggleFleaDateUnknown()" '+(hc.fleaDateUnknown?'checked':'')+'>Unknown</label></div></div><div class="mc-row"><div class="mc-label">Worm treated?</div><div class="mc-options"><label class="mc-option"><input type="radio" name="hc-wormed-radio" onclick="setWormTreatedValue(&quot;yes&quot;)" '+(hc.wormed===true?'checked':'')+'>Yes</label><label class="mc-option"><input type="radio" name="hc-wormed-radio" onclick="setWormTreatedValue(&quot;no&quot;)" '+(hc.wormed===false?'checked':'')+'>No</label></div></div><input type="hidden" id="hc-wormed" value="'+(hc.wormed===true?'yes':hc.wormed===false?'no':'')+'"><div class="mc-extra"><label>Date treated</label><div class="mc-inline-date"><input id="hc-worm-date" type="date" value="'+esc(hc.wormDate||((hc.wormed===true && !hc.wormDate && !hc.wormDateUnknown)?tod():''))+'" '+(hc.wormDateUnknown?'disabled':'')+'><label class="mc-option"><input id="hc-worm-date-unknown" type="checkbox" onclick="toggleWormDateUnknown()" '+(hc.wormDateUnknown?'checked':'')+'>Unknown</label></div></div><div><label>Health concerns *</label><textarea id="hc-concerns" rows="2" placeholder="None, or describe&#8230;" style="resize:vertical">'+esc(hc.healthConcerns||'')+'</textarea></div><div class="mc-row"><div class="mc-label">Microchip</div><div class="mc-options"><label class="mc-option"><input type="radio" name="hc-micro-type-radio" onclick="document.getElementById(&quot;hc-micro-type&quot;).value=&quot;yes&quot;;document.getElementById(&quot;hc-micro-num-wrap&quot;).style.display=&quot;block&quot;" '+(hc.microchip&&hc.microchip!=='none'?'checked':'')+'>Yes</label><label class="mc-option"><input type="radio" name="hc-micro-type-radio" onclick="document.getElementById(&quot;hc-micro-type&quot;).value=&quot;none&quot;;document.getElementById(&quot;hc-micro-num-wrap&quot;).style.display=&quot;none&quot;" '+(hc.microchip==='none'?'checked':'')+'>No</label></div></div><input type="hidden" id="hc-micro-type" value="'+(hc.microchip&&hc.microchip!=='none'?'yes':hc.microchip==='none'?'none':'')+'"><div id="hc-micro-num-wrap" class="mc-extra" style="'+(hc.microchip&&hc.microchip!=='none'?'':'display:none')+'"><label>Microchip number</label><input id="hc-micro-num" placeholder="Microchip number" value="'+(hc.microchip&&hc.microchip!=='none'?esc(hc.microchip):'')+'"></div></div><div><label>Dental grade *</label><div style="font-size:11px;color:#8e8e93;margin-bottom:7px">0 = healthy &middot; 4 = severe</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">'+[0,1,2,3,4].map(g=>'<div class="dental-btn '+(hc.dental===g?'sel':'')+'" onclick="selDental('+g+')" id="dg-'+g+'"><div style="font-size:17px;font-weight:700">'+g+'</div><div style="font-size:8px;color:#8e8e93;margin-top:2px">'+['None','Mild','Mod.','Heavy','Severe'][g]+'</div></div>').join('')+'</div><input type="hidden" id="hc-dental" value="'+(hc.dental!==undefined?hc.dental:'')+'"></div><div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><label style="margin:0">Medications</label><button onclick="addHcMed(\''+catId+'\')" class="btn" style="padding:4px 10px;font-size:12px">+ Add</button></div><div style="font-size:12px;color:#8e8e93;margin-bottom:8px">Add medication inline. Choose the shift it belongs to and it will appear in that shift monitoring log and history.</div>'+(meds.length?meds.map((m,i)=>'<div style="background:#f7fbfa;border:1px solid #d6e4e1;border-radius:12px;padding:10px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;color:#17394A">Medication '+(i+1)+'</div><button onclick="removeHcMed(\''+catId+'\',\''+m.id+'\')" style="color:#ff6f61;background:none;border:none;font-size:18px;cursor:pointer">&times;</button></div><label style="margin-bottom:6px">Medication details</label><textarea id="hc-med-details-'+m.id+'" rows="3" placeholder="e.g. Gabapentin 50mg capsule — give with food" style="resize:vertical;margin-bottom:8px">'+esc(m.details||(((m.name||'')+((m.dose||'')?' — '+m.dose:'')).trim()))+'</textarea><div><label>Administer at shift</label><div style="display:flex;gap:10px;margin-top:5px;margin-bottom:8px">'+['AM','PM'].map(s=>'<div class="cb-row" onclick="toggleHcMedShift(\''+catId+'\',\''+m.id+'\',\''+s+'\')" style="cursor:pointer"><div class="cb-box '+((m.shifts||[]).includes(s)?'checked':'')+'" id="hc-med-cb-'+m.id+'-'+s+'">'+((m.shifts||[]).includes(s)?'✓':s)+'</div><span style="font-size:14px">'+s+' shift</span></div>').join('')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>Start</label><input id="hc-med-start-'+m.id+'" type="date" value="'+(m.startDate||c.checkIn||tod())+'"></div><div><label>Until</label><input id="hc-med-end-'+m.id+'" type="date" value="'+(m.endDate||c.checkOut||tod())+'"></div></div><input id="hc-med-notes-'+m.id+'" placeholder="Notes (optional)" value="'+esc(m.notes||'')+'" style="margin-top:8px"></div>').join(''):'<div class="helper" style="margin-top:0">No medications added.</div>')+'</div></div><div class="sec" style="margin-top:14px">Carrier description</div><div class="card" style="margin-bottom:12px"><label>Carrier description</label><textarea id="hc-carrier-desc" rows="3" placeholder="Describe the carrier, condition, cleanliness, bedding, labels, damage, odour, or anything important..." style="resize:vertical">'+esc(((hc.carrier&&hc.carrier.description)||''))+'</textarea><div id="hc-carrier-photos" class="hc-photo-grid">'+((((cat(catId)||{})._hcMediaDraft||{}).carrier||{}).photos||[]).map((p,i)=>'<div class="hc-photo-tile"><img src="'+p+'" alt="Carrier photo '+(i+1)+'"><button type="button" class="hc-photo-delete" onclick="clearHcExtraPhoto(\\\''+catId+'\\\',\\\'carrier\\\','+i+')">×</button></div>').join('')+'<label class="hc-photo-add" title="Add carrier photo">+<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setHcExtraPhoto(\''+catId+'\',\'carrier\',this.files&&this.files[0]);this.value=\'\'"></label></div><div class="helper">Attach a photo from camera roll or take a new photo.</div><div class="sec" style="margin-top:14px">Personal belongings</div><div class="card" style="margin-bottom:12px"><label>Personal belongings</label><textarea id="hc-belongings-desc" rows="3" placeholder="List belongings brought in, such as food, toys, bedding, medication, bowls, or other items..." style="resize:vertical">'+esc(((hc.belongings&&hc.belongings.description)||''))+'</textarea><div id="hc-belongings-photos" class="hc-photo-grid">'+((((cat(catId)||{})._hcMediaDraft||{}).belongings||{}).photos||[]).map((p,i)=>'<div class="hc-photo-tile"><img src="'+p+'" alt="Belongings photo '+(i+1)+'"><button type="button" class="hc-photo-delete" onclick="clearHcExtraPhoto(\\\''+catId+'\\\',\\\'belongings\\\','+i+')">×</button></div>').join('')+'<label class="hc-photo-add" title="Add belongings photo">+<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setHcExtraPhoto(\''+catId+'\',\'belongings\',this.files&&this.files[0]);this.value=\'\'"></label></div><div class="helper">Attach a photo from camera roll or take a new photo.</div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveHealthCheck(\''+catId+'\')" style="font-size:15px;font-weight:700;padding:10px 20px">Save &amp; admit</button></div>';
 }
-window.selDemean=d=>{['friendly','anxious','caution'].forEach(x=>{const el=$('db-'+x);if(el)el.className='demean-btn '+(x===d?'sel-'+x:'');});const hi=$('hc-demean');if(hi)hi.value=d;};
+
+
+
+window.updateFleaAlert=()=>{
+  const fleas = ($('hc-fleas')||{value:''}).value;
+  const treated = ($('hc-flea-tx')||{value:''}).value;
+  const dateVal = (($('hc-flea-date')||{value:''}).value||'').trim();
+  const unknown = !!(($('hc-flea-date-unknown')||{}).checked);
+  const flag = $('hc-fleas-flag');
+  if(!flag) return;
+  const resolved = fleas === 'yes' && treated === 'yes' && !unknown && dateVal === tod();
+  if(fleas === 'yes' && !resolved){
+    flag.style.display = 'block';
+    flag.innerHTML = treated === 'yes'
+      ? '⚠️ Fleas present — alert remains until resolved.'
+      : '⚠️ Fleas present — unresolved flea alert.';
+  }else{
+    flag.style.display = 'none';
+  }
+};
+window.setFleasPresentValue=(val)=>{
+  const hidden=$('hc-fleas');
+  if(hidden) hidden.value=val;
+  updateFleaAlert();
+};
+window.setFleaTreatedValue=(val)=>{
+  const hidden=$('hc-flea-tx');
+  if(hidden) hidden.value=val;
+  const dateEl=$('hc-flea-date');
+  const unkEl=$('hc-flea-date-unknown');
+  if(val==='yes' && dateEl && !dateEl.value && !(unkEl&&unkEl.checked)){
+    dateEl.value=tod();
+  }
+  updateFleaAlert();
+};
+window.toggleFleaDateUnknown=()=>{
+  const unk=$('hc-flea-date-unknown');
+  const dateEl=$('hc-flea-date');
+  if(!unk || !dateEl) return;
+  if(unk.checked){
+    dateEl.value='';
+    dateEl.disabled=true;
+  }else{
+    dateEl.disabled=false;
+  }
+  updateFleaAlert();
+};
+window.setWormTreatedValue=(val)=>{
+  const hidden=$('hc-wormed');
+  if(hidden) hidden.value=val;
+  const dateEl=$('hc-worm-date');
+  const unkEl=$('hc-worm-date-unknown');
+  if(val==='yes' && dateEl && !dateEl.value && !(unkEl&&unkEl.checked)){
+    dateEl.value=tod();
+  }
+};
+window.toggleWormDateUnknown=()=>{
+  const unk=$('hc-worm-date-unknown');
+  const dateEl=$('hc-worm-date');
+  if(!unk || !dateEl) return;
+  if(unk.checked){
+    dateEl.value='';
+    dateEl.disabled=true;
+  }else{
+    dateEl.disabled=false;
+  }
+};
+
+
+window.selDemean=d=>{
+  ['friendly','anxious','caution'].forEach(x=>{
+    const el=$('db-'+x);
+    if(el) el.className='demean-btn '+(x===d?'sel-'+x:'');
+  });
+  const hi=$('hc-demean');
+  if(hi) hi.value=d;
+};
 window.toggleMicroInput=()=>{const t=($('hc-micro-type')||{value:''}).value;const inp=$('hc-micro-num');if(inp)inp.style.display=t==='yes'?'':'none';};
 window.selDental=g=>{for(let i=0;i<=4;i++){const el=$('dg-'+i);if(el)el.className='dental-btn '+(i===g?'sel':'');}const hd=$('hc-dental');if(hd)hd.value=g;};
 window.addHcMed=catId=>{const c=cat(catId);const meds=hcDraftMeds(catId);meds.push({id:uid(),details:'',name:'',dose:'',shifts:[],startDate:c&&c.checkIn?c.checkIn:tod(),endDate:c&&c.checkOut?c.checkOut:tod(),notes:''});openModal(healthCheckModal(catId));};
 window.toggleHcMedShift=(catId,mid,shift)=>{const meds=hcDraftMeds(catId);const m=meds.find(x=>x.id===mid);if(!m)return;m.shifts=Array.isArray(m.shifts)?m.shifts:[];m.shifts=m.shifts.includes(shift)?m.shifts.filter(s=>s!==shift):[...m.shifts,shift];const el=$('hc-med-cb-'+mid+'-'+shift);if(el){const on=m.shifts.includes(shift);el.className='cb-box '+(on?'checked':'');el.textContent=on?'✓':shift;}};
 window.removeHcMed=(catId,mid)=>{const meds=hcDraftMeds(catId);_hcMedDrafts[catId]=meds.filter(m=>m.id!==mid);openModal(healthCheckModal(catId));};
-window.saveHealthCheck=catId=>{const c=cat(catId);if(!c)return;const wt=parseFloat(($('hc-wt')||{value:''}).value);if(!wt||isNaN(wt)){alert('Admission weight required.');return;}const dem=($('hc-demean')||{value:''}).value;if(!dem){alert('Demeanour required.');return;}const fleas=($('hc-fleas')||{value:''}).value;if(!fleas){alert('Fleas required.');return;}const fTx=($('hc-flea-tx')||{value:''}).value;if(!fTx){alert('Flea treated required.');return;}const worm=($('hc-wormed')||{value:''}).value;if(!worm){alert('Wormed required.');return;}const con=($('hc-concerns')||{value:''}).value.trim();if(!con){alert('Health concerns required.');return;}const mT=($('hc-micro-type')||{value:''}).value;if(!mT){alert('Microchip status required.');return;}const mN=($('hc-micro-num')||{value:''}).value.trim();if(mT==='yes'&&!mN){alert('Microchip number required.');return;}const dent=($('hc-dental')||{value:''}).value;if(dent===''){alert('Dental grade required.');return;}
-const draftMeds=hcDraftMeds(catId).map(m=>({id:m.id,details:(($('hc-med-details-'+m.id)||{value:m.details||''}).value||'').trim(),shifts:[...(m.shifts||[])],startDate:(($('hc-med-start-'+m.id)||{value:m.startDate||tod()}).value||tod()),endDate:(($('hc-med-end-'+m.id)||{value:m.endDate||tod()}).value||tod()),notes:(($('hc-med-notes-'+m.id)||{value:m.notes||''}).value||'').trim()}));
-for(const m of draftMeds){
-  if(!m.details){alert('Each medication needs details entered, or remove the empty medication row.');return;}
-  if(!(m.shifts||[]).length){alert('Each medication needs at least one shift selected.');return;}
-}
-c.medications=draftMeds.map(m=>({id:m.id,name:m.details,dose:'',details:m.details,shifts:m.shifts,startDate:m.startDate,endDate:m.endDate,notes:m.notes}));
-_hcMedDrafts[catId]=cloneHcMeds(c.medications);
-const carrierDesc=(($('hc-carrier-desc')||{value:''}).value||'').trim();
-const belongingsDesc=(($('hc-belongings-desc')||{value:''}).value||'').trim();
-const mediaDraft=ensureHcMediaDraft(catId)||{carrier:{photos:[]},belongings:{photos:[]}};
-const existingCarrier=((c.healthCheck&&c.healthCheck.carrier)||((c.preBoardingHealthCheck||{}).carrier)||{description:'',photo:'',photos:[]});
-const existingBelongings=((c.healthCheck&&c.healthCheck.belongings)||((c.preBoardingHealthCheck||{}).belongings)||{description:'',photo:'',photos:[]});
-const carrierPhotos=((mediaDraft.carrier&&mediaDraft.carrier.photos)||existingCarrier.photos||((existingCarrier.photo||'')?[existingCarrier.photo]:[])).slice();
-const belongingsPhotos=((mediaDraft.belongings&&mediaDraft.belongings.photos)||existingBelongings.photos||((existingBelongings.photo||'')?[existingBelongings.photo]:[])).slice();
-c.healthCheck={weight:wt,demeanour:dem,fleas:fleas==='yes',fleaTreated:fTx==='yes',wormed:worm==='yes',healthConcerns:con,microchip:mT==='none'?'none':mN,dental:parseInt(dent),carrier:{description:carrierDesc,photo:carrierPhotos[0]||'',photos:carrierPhotos},belongings:{description:belongingsDesc,photo:belongingsPhotos[0]||'',photos:belongingsPhotos},completed:true};
-c.preBoardingHealthCheck=JSON.parse(JSON.stringify(c.healthCheck));
-delete c._hcMediaDraft;c.demeanour=dem;c.admitted=true;c.admittedAt=nowISO();sv();closeModal();render();};
-let _shiftCbs={AM:false,PM:false};
-function addMedSheet(catId,fromHC){_shiftCbs={AM:false,PM:false};return '<div class="sec" style="margin-bottom:12px">Add medication</div><div style="display:grid;gap:10px"><input id="med-name" placeholder="Medication name *"><input id="med-dose" placeholder="Dose *"><div><label>Administer at shift</label><div style="display:flex;gap:10px;margin-top:5px">'+['AM','PM'].map(s=>'<div class="cb-row" onclick="toggleShiftCb(\''+s+'\')" style="cursor:pointer"><div class="cb-box" id="cb-'+s+'">'+s+'</div><span style="font-size:14px">'+s+' shift</span></div>').join('')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>Start *</label><input id="med-start" type="date" value="'+tod()+'"></div><div><label>Until *</label><input id="med-end" type="date" value="'+tod()+'"></div></div><input id="med-notes" placeholder="Notes (optional)"></div><div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px"><button class="btn" onclick="closeSheet()'+(fromHC?';openModal(healthCheckModal(\''+catId+'\'))':'')+'">Cancel</button><button class="btn btn-primary" onclick="saveMedEntry(\''+catId+'\','+!!fromHC+')">Add</button></div>';}
-window.toggleShiftCb=s=>{_shiftCbs[s]=!_shiftCbs[s];const el=$('cb-'+s);if(el){el.className='cb-box '+(_shiftCbs[s]?'checked':'');el.textContent=_shiftCbs[s]?'✓':s;}};
-window.saveMedEntry=(catId,fromHC)=>{const name=($('med-name')||{value:''}).value.trim(),dose=($('med-dose')||{value:''}).value.trim(),shifts=Object.entries(_shiftCbs).filter(([,v])=>v).map(([k])=>k),start=($('med-start')||{value:''}).value,end=($('med-end')||{value:''}).value,notes=($('med-notes')||{value:''}).value.trim();if(!name||!dose){alert('Name and dose required.');return;}if(!shifts.length){alert('Select at least one shift.');return;}const c=cat(catId);if(!c.medications)c.medications=[];c.medications.push({id:uid(),name,dose,shifts,startDate:start,endDate:end,notes});_shiftCbs={AM:false,PM:false};sv();closeSheet();if(fromHC)openModal(healthCheckModal(catId));else render();};
-let _foodTypes=[];
-function catFormModal(existingId,preSuiteId){
-  const ex=existingId?cat(existingId):null,
-    vacant=S.suites.filter(su=>{const occ=S.cats.filter(c=>c.suiteId===su.id&&c.id!==existingId).length;return occ<(su.maxOccupants||1);}),
-    suiteOpts=[{id:'',name:'None'},...(ex&&ex.suiteId?[suite(ex.suiteId)].filter(Boolean):[]),...vacant].filter((v,i,a)=>v&&a.findIndex(x=>x&&x.id===v.id)===i),
-    fts=ex&&ex.foodTypes?[...ex.foodTypes]:[];
-  _foodTypes=[...fts];
-  window._selectedPreviousCatId='';
-  const tasks=ex&&ex.monitoringTasks?ex.monitoringTasks:[];
-  return '<div class="sec" style="margin-bottom:4px">'+(ex?'Edit cat':'New cat')+'</div>'
-    +'<div style="font-size:12px;color:#8e8e93;margin-bottom:12px">* = required</div>'
-    +'<div style="display:grid;gap:11px">'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-      +'<div style="position:relative"><label>Cat name *</label>'
-        +'<input id="cf-name" value="'+esc(ex?ex.name:'')+'" oninput="handlePreviousCatInput()" onblur="handlePreviousCatBlur()" autocomplete="off">'
-        +'<div id="cf-prev-results" style="position:relative;z-index:20"></div>'
-        +'<div style="font-size:11px;color:#8e8e93;margin-top:4px">Type a previous cat name to search archived records.</div>'
-      +'</div>'
-      +'<div><label>Breed *</label><input id="cf-breed" value="'+esc(ex?ex.breed:'')+'"></div>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
-      +'<div><label>Age (yrs) *</label><input id="cf-age" type="number" value="'+esc(ex?String(ex.age):'')+'"></div>'
-      +'<div><label>Owner first *</label><input id="cf-owner" value="'+esc(ex?ex.owner:'')+'"></div>'
-      +'<div><label>Owner last *</label><input id="cf-ownerlast" value="'+esc(ex?ex.ownerLast:'')+'"></div>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-      +'<div><label>Suite *</label><select id="cf-suite" style="height:42px">'+suiteOpts.map(su=>'<option value="'+esc(su.id)+'" '+((ex?ex.suiteId:preSuiteId)===su.id?'selected':'')+'>'+esc(su.name||'None')+'</option>').join('')+'</select></div>'
-      +'<div></div>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-      +'<div><label>Check-in *</label><input id="cf-ci" type="date" value="'+(ex?ex.checkIn:tod())+'"></div>'
-      +'<div><label>Check-out *</label><input id="cf-co" type="date" value="'+(ex?ex.checkOut:tod())+'"></div>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-      +'<div><label>Owner phone</label><input id="cf-phone" value="'+esc(ex?ex.ownerPhone:'')+'"></div>'
-      +'<div><label>Owner email</label><input id="cf-email" type="email" value="'+esc(ex?ex.ownerEmail:'')+'"></div>'
-    +'</div>'
-    +'<div><label style="margin-bottom:7px;display:block">Food type(s) *</label><div style="display:flex;flex-direction:column;gap:3px">'
-      +['wet','dry','other'].map((t,i)=>'<div class="cb-row" onclick="toggleFT(\''+t+'\')"><div class="cb-box '+(fts.includes(t)?'checked':'')+'" id="ft-'+t+'">'+(fts.includes(t)?'&#10003;':'&middot;')+'</div><span>'+['Wet food','Dry food','Owner provided'][i]+'</span></div>').join('')
-      +'</div><input id="cf-foodnote" placeholder="Owner provided food details" value="'+esc(ex?ex.foodNote:'')+'" style="margin-top:7px"></div>'
-    +'<div><label>Clinical notes</label><textarea id="cf-notes" rows="2" style="resize:vertical">'+esc(ex?ex.notes:'')+'</textarea></div>'
-    +'<div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><label style="margin:0">Monitoring tasks</label><button onclick="addTaskInForm(\''+esc(ex?ex.id:'')+'\',event)" class="btn" style="padding:4px 10px;font-size:12px">+ Add</button></div>'
-      +tasks.map(t=>'<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f2f2f7"><div style="flex:1;font-size:14px">'+esc(t.label)+' <span style="color:#8e8e93;font-size:12px">('+t.shift+')</span></div>'+(ex?'<button onclick="removeTaskFromCat(\''+ex.id+'\',\''+t.id+'\',event)" class="btn" style="padding:2px 8px;font-size:11px">&times;</button>':'')+'</div>').join('')
-    +'</div></div>'
-    +'<div style="display:flex;justify-content:space-between;gap:8px;margin-top:16px"><button class="btn" onclick="closeModal()">Cancel</button>'
-      +(ex?'<button class="btn" style="color:#ff3b30;border-color:#ffb3b3" onclick="deleteCat(\''+ex.id+'\')">Remove</button>':'')
-      +'<button class="btn btn-primary" onclick="saveCat(\''+esc(ex?ex.id:'new')+'\',\''+esc(preSuiteId||'')+'\')" style="font-size:14px;font-weight:700;padding:10px 20px">Save</button></div>';
-}
-window.renderPreviousCatSuggestions=matches=>{const box=$('cf-prev-results');if(!box)return;if(!matches||!matches.length){box.innerHTML='';return;}box.innerHTML='<div style="margin-top:6px;background:#fff;border:1px solid #e5e5ea;border-radius:12px;box-shadow:0 8px 18px rgba(0,0,0,.08);overflow:hidden">'+matches.map(c=>'<button type="button" onclick="selectPreviousCat(\''+c.id+'\')" style="display:block;width:100%;text-align:left;background:#fff;border:0;padding:10px 12px;border-bottom:1px solid #f2f2f7;cursor:pointer"><div style="font-size:13px;font-weight:700;color:#1c1c1e">'+esc(c.name)+(c.breed?' · '+esc(c.breed):'')+'</div><div style="font-size:11px;color:#8e8e93">'+esc([ownerFull(c),c.ownerPhone,c.ownerEmail].filter(Boolean).join(' · '))+'</div></button>').join('')+'<button type="button" onclick="clearPreviousCatSelection(true)" style="display:block;width:100%;text-align:left;background:#fff8e1;border:0;padding:10px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#e65100">Add a new pet instead</button></div>';};
-window.handlePreviousCatInput=()=>{const val=($('cf-name')||{value:''}).value.trim();window._selectedPreviousCatId='';if(!val){window.renderPreviousCatSuggestions([]);return;}window.renderPreviousCatSuggestions(previousCatMatches(val));};
-window.handlePreviousCatBlur=()=>{setTimeout(()=>{const box=$('cf-prev-results');if(box&&!window._selectedPreviousCatId)box.innerHTML='';},180);};
-window.refreshFoodTypeUI=()=>{['wet','dry','other'].forEach(t=>{const el=$('ft-'+t);if(el){const on=_foodTypes.includes(t);el.className='cb-box '+(on?'checked':'');el.innerHTML=on?'&#10003;':'&middot;';}});};
-window.clearPreviousCatSelection=(clearFields)=>{window._selectedPreviousCatId='';const box=$('cf-prev-results');if(box)box.innerHTML='';if(clearFields){['cf-breed','cf-age','cf-owner','cf-ownerlast','cf-phone','cf-email','cf-foodnote','cf-notes'].forEach(id=>{const el=$(id);if(el)el.value='';});_foodTypes=[];window.refreshFoodTypeUI();}};
-window.selectPreviousCat=id=>{const c=dedupePreviousCats(S.archivedCats||[]).find(x=>x.id===id)||(S.archivedCats||[]).find(x=>x.id===id);if(!c)return;window._selectedPreviousCatId=id;const set=(field,val)=>{const el=$(field);if(el)el.value=val??'';};set('cf-name',c.name);set('cf-breed',c.breed);set('cf-age',c.age);set('cf-owner',c.owner);set('cf-ownerlast',c.ownerLast);set('cf-phone',c.ownerPhone);set('cf-email',c.ownerEmail);set('cf-foodnote',c.foodNote||'');set('cf-notes',c.notes||'');_foodTypes=Array.isArray(c.foodTypes)?[...c.foodTypes]:[];window.refreshFoodTypeUI();const box=$('cf-prev-results');if(box)box.innerHTML='<div style="margin-top:6px;background:#e8f5e9;border:1px solid #c8e6c9;border-radius:12px;padding:10px 12px;font-size:12px;color:#1b5e20;font-weight:600">Using previous details for '+esc(c.name)+'. Boarding dates and health check will be new for this stay.</div>';};
+window.saveHealthCheck=catId=>{
+  const c=cat(catId); if(!c) return;
 
+  const wt = parseFloat((($('hc-wt')||{value:'0'}).value||'0'));
+  if(!(wt>0)){ alert('Valid admission weight required.'); return; }
 
-window.toggleFT=t=>{const el=$('ft-'+t);if(!el)return;const idx=_foodTypes.indexOf(t);if(idx>=0){_foodTypes.splice(idx,1);el.className='cb-box';el.innerHTML='&middot;';}else{_foodTypes.push(t);el.className='cb-box checked';el.innerHTML='&#10003;';}};
-window.addTaskInForm=(catId,e)=>{if(e)e.preventDefault();const label=prompt('Task label?');if(!label)return;const shift=prompt('Shift? AM / PM / both','both')||'both';if(catId){const c=cat(catId);if(c){if(!c.monitoringTasks)c.monitoringTasks=[];c.monitoringTasks.push({id:uid(),label,shift});sv();}}openModal(catFormModal(catId||null,null));};
-window.removeTaskFromCat=(catId,tid,e)=>{if(e)e.preventDefault();const c=cat(catId);if(!c||!c.monitoringTasks)return;c.monitoringTasks=c.monitoringTasks.filter(t=>t.id!==tid);sv();openModal(catFormModal(catId,null));};
-window.saveCat=(eid,preSuiteId)=>{const name=($('cf-name')||{value:''}).value.trim();if(!name){alert('Name required.');return;}const breed=($('cf-breed')||{value:''}).value.trim();if(!breed){alert('Breed required.');return;}const age=parseFloat(($('cf-age')||{value:''}).value);if(!age||isNaN(age)){alert('Age required.');return;}const owner=($('cf-owner')||{value:''}).value.trim();if(!owner){alert('Owner first name required.');return;}const ownerLast=($('cf-ownerlast')||{value:''}).value.trim();const suiteId=($('cf-suite')||{value:''}).value||null;if(!suiteId){alert('Suite required.');return;}const checkIn=($('cf-ci')||{value:''}).value;if(!checkIn){alert('Check-in required.');return;}const checkOut=($('cf-co')||{value:''}).value;if(!checkOut){alert('Check-out required.');return;}const phone=($('cf-phone')||{value:''}).value,email=($('cf-email')||{value:''}).value,foodNote=($('cf-foodnote')||{value:''}).value,notes=($('cf-notes')||{value:''}).value;if(!_foodTypes.length){alert('Select at least one food type.');return;}
-  if(eid!=='new'){const c=cat(eid);if(!c)return;Object.assign(c,{name,breed,age,owner,ownerLast,suiteId,checkIn,checkOut,ownerPhone:phone,ownerEmail:email,foodTypes:[..._foodTypes],foodNote,notes});}
-  else S.cats.push({id:uid(),name,breed,age,color:COLORS[S.cats.length%COLORS.length],owner,ownerLast,ownerPhone:phone,ownerEmail:email,notes,suiteId:suiteId||preSuiteId||null,foodTypes:[..._foodTypes],foodNote,alerts:[],medications:[],monitoringTasks:[],checkIn,checkOut,admitted:false,admittedAt:null,photo:null,photos:[],noteLog:[],demeanour:null,healthCheck:null,vetNotified:false});
-  _foodTypes=[];window._selectedPreviousCatId='';sv();closeModal();render();
+  const dem = (($('hc-demean')||{value:''}).value||'').trim();
+  if(!dem){ alert('Demeanour required.'); return; }
+
+  const fleas = (($('hc-fleas')||{value:''}).value||'').trim();
+  if(!fleas){ alert('Fleas required.'); return; }
+
+  const fTx = (($('hc-flea-tx')||{value:''}).value||'').trim();
+  if(!fTx){ alert('Flea treated required.'); return; }
+
+  const worm = (($('hc-wormed')||{value:''}).value||'').trim();
+  if(!worm){ alert('Worm treated required.'); return; }
+
+  const con = (($('hc-concerns')||{value:''}).value||'').trim();
+  if(!con){ alert('Health concerns required.'); return; }
+
+  const mT = (($('hc-micro-type')||{value:''}).value||'').trim();
+  if(!mT){ alert('Microchip status required.'); return; }
+
+  const mN = (($('hc-micro-num')||{value:''}).value||'').trim();
+  if(mT==='yes' && !mN){ alert('Microchip number required.'); return; }
+
+  const dentRaw = (($('hc-dental')||{value:''}).value||'').trim();
+  if(dentRaw===''){ alert('Dental grade required.'); return; }
+  const dent = parseInt(dentRaw, 10);
+
+  const fleaDateUnknown = !!(($('hc-flea-date-unknown')||{}).checked);
+  const fleaDate = fleaDateUnknown ? '' : ((($('hc-flea-date')||{value:''}).value)||'').trim();
+
+  const wormDateUnknown = !!(($('hc-worm-date-unknown')||{}).checked);
+  const wormDate = wormDateUnknown ? '' : ((($('hc-worm-date')||{value:''}).value)||'').trim();
+
+  const draftMeds = hcDraftMeds(catId).map(m=>({
+    id:m.id,
+    details:(($('hc-med-details-'+m.id)||{value:m.details||''}).value||'').trim(),
+    shifts:[...(m.shifts||[])],
+    startDate:(($('hc-med-start-'+m.id)||{value:m.startDate||tod()}).value||tod()),
+    endDate:(($('hc-med-end-'+m.id)||{value:m.endDate||tod()}).value||tod()),
+    notes:(($('hc-med-notes-'+m.id)||{value:m.notes||''}).value||'').trim()
+  }));
+
+  for(const m of draftMeds){
+    if(!m.details){
+      alert('Each medication needs details entered, or remove the empty medication row.');
+      return;
+    }
+    if(!(m.shifts||[]).length){
+      alert('Each medication needs at least one shift selected.');
+      return;
+    }
+  }
+
+  c.medications = draftMeds.map(m=>({
+    id:m.id,
+    name:m.details,
+    dose:'',
+    details:m.details,
+    shifts:m.shifts,
+    startDate:m.startDate,
+    endDate:m.endDate,
+    notes:m.notes
+  }));
+  _hcMedDrafts[catId] = cloneHcMeds(c.medications);
+
+  const carrierDesc = (($('hc-carrier-desc')||{value:''}).value||'').trim();
+  const belongingsDesc = (($('hc-belongings-desc')||{value:''}).value||'').trim();
+
+  const mediaDraft = ensureHcMediaDraft(catId)||{carrier:{photos:[]},belongings:{photos:[]}};
+  const existingCarrier = ((c.healthCheck&&c.healthCheck.carrier)||((c.preBoardingHealthCheck||{}).carrier)||{description:'',photo:'',photos:[]});
+  const existingBelongings = ((c.healthCheck&&c.healthCheck.belongings)||((c.preBoardingHealthCheck||{}).belongings)||{description:'',photo:'',photos:[]});
+
+  const carrierPhotos = ((mediaDraft.carrier&&mediaDraft.carrier.photos)||existingCarrier.photos||((existingCarrier.photo||'')?[existingCarrier.photo]:[])).slice();
+  const belongingsPhotos = ((mediaDraft.belongings&&mediaDraft.belongings.photos)||existingBelongings.photos||((existingBelongings.photo||'')?[existingBelongings.photo]:[])).slice();
+
+  const fleaResolved = (fleas==='yes' && fTx==='yes' && !fleaDateUnknown && fleaDate===tod());
+
+  c.healthCheck = {
+    weight: wt,
+    demeanour: dem,
+    fleas: fleas==='yes',
+    fleaAlertOpen: (fleas==='yes' && !fleaResolved),
+    fleaTreated: fTx==='yes',
+    fleaDate: fleaDate,
+    fleaDateUnknown: fleaDateUnknown,
+    wormed: worm==='yes',
+    wormDate: wormDate,
+    wormDateUnknown: wormDateUnknown,
+    healthConcerns: con,
+    microchip: mT==='none' ? 'none' : mN,
+    dental: dent,
+    carrier: {description: carrierDesc, photo: carrierPhotos[0]||'', photos: carrierPhotos},
+    belongings: {description: belongingsDesc, photo: belongingsPhotos[0]||'', photos: belongingsPhotos},
+    completed: true
+  };
+
+  c.preBoardingHealthCheck = JSON.parse(JSON.stringify(c.healthCheck));
+  c.demeanour = dem;
+  c.admitted = true;
+  if(!c.checkIn) c.checkIn = tod();
+
+  delete c._hcMediaDraft;
+  sv();
+  closeModal();
+  if(typeof view !== 'undefined') view = 'home';
+  render();
 };
 window.deleteCat=id=>{if(!confirm('Remove this cat?'))return;S.cats=S.cats.filter(c=>c.id!==id);if(selCat===id)selCat=null;sv();closeModal();render();};
 function alertModal(cid){const c=cat(cid);return'<div class="sec" style="margin-bottom:10px">Alert &mdash; '+esc(c?c.name:'')+'</div><textarea id="al-text" rows="3" placeholder="Concern for all staff&#8230;" style="resize:vertical;margin-bottom:12px"></textarea><div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn" onclick="closeSheet()">Cancel</button><button class="btn btn-danger" onclick="saveAlert(\''+cid+'\')">Save</button></div>';}
@@ -1249,7 +1418,7 @@ window.buildPDFBlob=async (c,discharge)=>{
   const hc=c.healthCheck;
   if(hc&&hc.completed){
     sectionTitle('Pre-boarding health check');
-    [['Admission weight',hc.weight+'kg'],['Demeanour',DL[hc.demeanour]||hc.demeanour||''],['Fleas',hc.fleas?'Yes':'No'],['Flea treated',hc.fleaTreated?'Yes':'No'],['Wormed',hc.wormed?'Yes':'No'],['Health concerns',hc.healthConcerns||''],['Microchip',hc.microchip==='none'?'No microchip':hc.microchip||''],['Dental',DENTAL_DESC[hc.dental]||'Grade '+hc.dental]].forEach(([k,v])=>writeLines(k+': '+v,40,10));
+    [['Admission weight',hc.weight+'kg'],['Demeanour',DL[hc.demeanour]||hc.demeanour||''],['Fleas',hc.fleas?'Yes':'No'],['Flea treated',hc.fleaTreated?'Yes':'No'],['Flea treatment date',esc(hc.fleaDate||'')||'&mdash;'],['Wormed',hc.wormed?'Yes':'No'],['Worming date',esc(hc.wormDate||'')||'&mdash;'],['Health concerns',hc.healthConcerns||''],['Microchip',hc.microchip==='none'?'No microchip':hc.microchip||''],['Dental',DENTAL_DESC[hc.dental]||'Grade '+hc.dental]].forEach(([k,v])=>writeLines(k+': '+v,40,10));
     y+=4;
   }
   if(c.medications&&c.medications.length){
