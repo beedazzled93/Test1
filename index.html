@@ -1144,7 +1144,8 @@ window.saveCatProfile=(existingId,sid)=>{
   obj.name=name;
   obj.breed=breed;
   obj.age=age;
-  obj.color=(($('cf-color')||{value:'c-teal'}).value||'c-teal');
+  obj.colour=(($('cf-colour')||{value:''}).value||'').trim();
+  obj.color=obj.color||'c-teal';
   obj.owner=(($('cf-owner')||{value:''}).value||'').trim();
   obj.ownerLast=(($('cf-ownerLast')||{value:''}).value||'').trim();
   obj.ownerPhone=(($('cf-ownerPhone')||{value:''}).value||'').trim();
