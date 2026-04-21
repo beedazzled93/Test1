@@ -1000,7 +1000,7 @@ function renderCatInfo(){
   const cid=selCat||all[0].id;const c=cat(cid);const opts=all.map(x=>'<option value="'+x.id+'" '+(x.id===cid?'selected':'')+'>'+esc(x.name)+(x.admitted?' (Admitted)':'')+'</option>').join('');
   h+='<select onchange="selCat=this.value;render()" style="margin-bottom:14px">'+opts+'</select>';if(!c)return h;
   const hc=c.healthCheck;const dmCol=DC[c.demeanour]||'';
-  h+='<div class="card" style="margin-bottom:12px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div style="position:relative">'+avHtml(c,64,20)+'<div class="cam-btn" onclick="_pendPhotoCat=\''+c.id+'\';$(\'cam-profile\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#e8f4ff" stroke-width="2.5"><circle cx="12" cy="13" r="4"/><path d="M5 7h2l2-3h6l2 3h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg></div></div><div style="flex:1"><div style="font-size:18px;font-weight:700">'+esc(c.name)+(c.demeanour?' <span style="color:'+dmCol+';font-weight:700;font-size:15px">'+DL[c.demeanour]+'</span>':'')+'</div>'+(ownerFull(c)?'<div style="font-size:13px;font-style:italic;color:#555">'+esc(ownerFull(c))+'</div>':'')+'<div style="font-size:13px;color:#8e8e93">'+esc(c.breed)+' &middot; '+esc(c.age)+' yrs</div>'+([c.ownerPhone,c.ownerEmail].filter(Boolean).length?'<div style="font-size:12px;color:#8e8e93">'+esc([c.ownerPhone,c.ownerEmail].filter(Boolean).join(' &middot; '))+'</div>':'')+'</div></div><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><td style="color:#8e8e93;padding:4px 0;width:105px">Food</td><td style="padding:4px 0;font-weight:500">'+esc((c.foodTypes||[]).join(', '))+(c.foodNote?' &mdash; '+esc(c.foodNote):'')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Notes</td><td style="padding:4px 0">'+esc(c.notes||'None')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Status</td><td style="padding:4px 0;font-weight:600">'+(c.admitted?'<span style="color:#1b5e20">Admitted</span>':'Pending')+'</td></tr>'+(c.admittedAt?'<tr><td style="color:#8e8e93;padding:4px 0">Admitted</td><td style="padding:4px 0">'+fmtDT(c.admittedAt)+'</td></tr>':'')+'</table></div>';
+  h+='<div class="card" style="margin-bottom:12px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div style="position:relative">'+avHtml(c,64,20)+'<div class="cam-btn" onclick="_pendPhotoCat=\''+c.id+'\';$(\'cam-profile\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#e8f4ff" stroke-width="2.5"><circle cx="12" cy="13" r="4"/><path d="M5 7h2l2-3h6l2 3h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg></div></div><div style="flex:1"><div style="font-size:18px;font-weight:700">'+esc(c.name)+(c.demeanour?' <span style="color:'+dmCol+';font-weight:700;font-size:15px">'+DL[c.demeanour]+'</span>':'')+'</div>'+(ownerFull(c)?'<div style="font-size:13px;font-style:italic;color:#555">'+esc(ownerFull(c))+'</div>':'')+'<div style="font-size:13px;color:#8e8e93">'+esc(c.breed)+' &middot; '+esc(c.age)+' yrs</div>'+([c.ownerPhone,c.ownerEmail].filter(Boolean).length?'<div style="font-size:12px;color:#8e8e93">'+esc([c.ownerPhone,c.ownerEmail].filter(Boolean).join(' &middot; '))+'</div>':'')+'</div></div><table style="width:100%;font-size:13px;border-collapse:collapse">'+(c.colour?'<tr><td style="color:#8e8e93;padding:4px 0;width:105px">Colour</td><td style="padding:4px 0;font-weight:500">'+esc(c.colour)+'</td></tr>':'')+'<tr><td style="color:#8e8e93;padding:4px 0;width:105px">Food</td><td style="padding:4px 0;font-weight:500">'+esc((c.foodTypes||[]).join(', '))+(c.foodNote?' &mdash; '+esc(c.foodNote):'')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Notes</td><td style="padding:4px 0">'+esc(c.notes||'None')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Status</td><td style="padding:4px 0;font-weight:600">'+(c.admitted?'<span style="color:#1b5e20">Admitted</span>':'Pending')+'</td></tr>'+(c.admittedAt?'<tr><td style="color:#8e8e93;padding:4px 0">Admitted</td><td style="padding:4px 0">'+fmtDT(c.admittedAt)+'</td></tr>':'')+'</table></div>';
   if(hc&&hc.completed){
     h+='<div class="sec">Pre-boarding health check</div><div class="card" style="margin-bottom:12px">'+((hc.fleaAlertOpen)?'<div class="mc-flag" style="margin-bottom:10px">⚠️ Flea alert active — keep visible until resolved.</div>':'')+'<table style="width:100%;font-size:13px;border-collapse:collapse">'+[['Admission weight',hc.weight+'kg'],['Demeanour',c.demeanour?'<span style="color:'+dmCol+';font-weight:700">'+DL[c.demeanour]+'</span>':'&mdash;'],['Fleas',hc.fleas?'Yes':'No'],['Flea alert',hc.fleaAlertOpen?'Active':'None'],['Flea treated',hc.fleaTreated?'Yes':'No'],['Flea treatment date',hc.fleaDateUnknown?'Unknown':(esc(hc.fleaDate||'')||'&mdash;')],['Wormed',hc.wormed?'Yes':'No'],['Worming date',hc.wormDateUnknown?'Unknown':(esc(hc.wormDate||'')||'&mdash;')],['Health concerns',esc(hc.healthConcerns)],['Microchip',hc.microchip==='none'?'No microchip':esc(hc.microchip)],['Dental',DENTAL_DESC[hc.dental]||'Grade '+hc.dental],['Carrier description',esc(((hc.carrier||{}).description)||'')||'&mdash;'],['Personal belongings',esc(((hc.belongings||{}).description)||'')||'&mdash;']].map(([k,v])=>'<tr><td style="color:#8e8e93;padding:4px 0;width:105px;vertical-align:top">'+k+'</td><td style="padding:4px 0;font-weight:500">'+v+'</td></tr>').join('')+'</table>'+((((hc.carrier||{}).photo)||((hc.belongings||{}).photo))?'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">'+(((hc.carrier||{}).photos&&hc.carrier.photos.length?hc.carrier.photos:[((hc.carrier||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Carrier photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Carrier photo '+(i+1)+'"></div>').join(''))+(((hc.belongings||{}).photos&&hc.belongings.photos.length?hc.belongings.photos:[((hc.belongings||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Belongings photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Belongings photo '+(i+1)+'"></div>').join(''))+'</div>':'')+'</div>';
   }
@@ -1091,6 +1091,77 @@ window.markVetNotified=id=>{const c=cat(id);if(!c)return;c.vetNotified=true;sv()
 window.notifyVet=(cid,aid)=>{const c=cat(cid);const a=(c.alerts||[]).find(x=>x.id===aid);if(a){a.vetNotified=true;sv();render();}};
 window.resolveAlert=(cid,aid)=>{const c=cat(cid);const a=(c.alerts||[]).find(x=>x.id===aid);if(a){a.resolved=true;sv();render();}};
 window.admitCat=async id=>{if(!S.currentStaff){alert('Sign in first.');return;}const c=cat(id);if(!c)return;if(!c.healthCheck||!c.healthCheck.completed){openModal(healthCheckModal(id));return;}c.admitted=true;c.admittedAt=nowISO();sv();render();};
+
+function catFormModal(existingId,sid){
+  const c=existingId?cat(existingId):null;
+  const foodTypes=(c&&Array.isArray(c.foodTypes)&&c.foodTypes.length?c.foodTypes:['wet']);
+  const saveArgs=(c ? '\''+c.id+'\'' : 'null')+",'"+(sid||'')+"'";
+  return '<div class="sec" style="margin-bottom:8px">'+(c?'Edit cat profile':'Add new cat profile')+'</div>'
+    +'<div style="display:grid;gap:10px">'
+    +'<div><label>Name *</label><input id="cf-name" value="'+esc(c?c.name:'')+'" placeholder="Cat name"></div>'
+    +'<div><label>Breed *</label><input id="cf-breed" value="'+esc(c?c.breed:'')+'" placeholder="Breed"></div>'
+    +'<div><label>Age (years) *</label><input id="cf-age" type="number" min="0" step="0.1" value="'+esc(c?c.age:'')+'" placeholder="Age"></div>'
+    +'<div><label>Colour</label><input id="cf-colour" type="text" list="cat-colour-suggestions" value="'+esc(c?((c.colour||'')):'')+'" placeholder="e.g. Black and white, tabby, calico"></div>'
+    +'<div><label>Owner first name</label><input id="cf-owner" value="'+esc(c?c.owner:'')+'" placeholder="Owner first name"></div>'
+    +'<div><label>Owner last name</label><input id="cf-ownerLast" value="'+esc(c?c.ownerLast:'')+'" placeholder="Owner last name"></div>'
+    +'<div><label>Owner phone</label><input id="cf-ownerPhone" value="'+esc(c?c.ownerPhone:'')+'" placeholder="Phone"></div>'
+    +'<div><label>Owner email</label><input id="cf-ownerEmail" value="'+esc(c?c.ownerEmail:'')+'" placeholder="Email"></div>'
+    +'<div><label>Check in</label><input id="cf-checkIn" type="date" value="'+esc(c&&c.checkIn?c.checkIn:tod())+'"></div>'
+    +'<div><label>Check out</label><input id="cf-checkOut" type="date" value="'+esc(c&&c.checkOut?c.checkOut:tod())+'"></div>'
+    +'<div><label>Food type</label><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">'
+      +['wet','dry'].map(ft=>'<label class="cb-row" style="padding:0"><div class="cb-box '+(foodTypes.includes(ft)?'checked':'')+'" onclick="toggleCatFoodType(\''+ft+'\')" id="cf-food-'+ft+'">'+(foodTypes.includes(ft)?'✓':'')+'</div><span style="font-size:14px">'+ft.charAt(0).toUpperCase()+ft.slice(1)+'</span></label>').join('')
+    +'</div><input id="cf-foodTypes" type="hidden" value="'+esc(foodTypes.join(','))+'"></div>'
+    +'<div><label>Food notes</label><input id="cf-foodNote" value="'+esc(c?c.foodNote:'')+'" placeholder="Food notes"></div>'
+    +'<div><label>General notes</label><textarea id="cf-notes" rows="3" style="resize:vertical" placeholder="Notes">'+esc(c?c.notes:'')+'</textarea></div>'
+    +'<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCatProfile('+saveArgs+')" style="font-weight:700">'+(c?'Save profile':'Save cat profile')+'</button></div>'
+    +'</div>';
+}
+window.toggleCatFoodType=ft=>{
+  const hidden=$('cf-foodTypes'); if(!hidden) return;
+  let vals=(hidden.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+  vals=vals.includes(ft)?vals.filter(x=>x!==ft):[...vals,ft];
+  if(!vals.length) vals=['wet'];
+  hidden.value=vals.join(',');
+  ['wet','dry'].forEach(x=>{
+    const el=$('cf-food-'+x);
+    if(el){
+      const on=vals.includes(x);
+      el.className='cb-box '+(on?'checked':'');
+      el.textContent=on?'✓':'';
+    }
+  });
+};
+window.saveCatProfile=(existingId,sid)=>{
+  const name=(($('cf-name')||{value:''}).value||'').trim();
+  const breed=(($('cf-breed')||{value:''}).value||'').trim();
+  const ageRaw=(($('cf-age')||{value:''}).value||'').trim();
+  const age=parseFloat(ageRaw||'0');
+  if(!name){alert('Cat name required.');return;}
+  if(!breed){alert('Breed required.');return;}
+  if(Number.isNaN(age) || age < 0){alert('Valid age required.');return;}
+  const base=existingId?cat(existingId):null;
+  const obj=base||{id:uid(),alerts:[],medications:[],monitoringTasks:[],admitted:false,admittedAt:null,photo:null,photos:[],noteLog:[],demeanour:null,healthCheck:null,vetNotified:false};
+  obj.name=name;
+  obj.breed=breed;
+  obj.age=age;
+  obj.color=(($('cf-color')||{value:'c-teal'}).value||'c-teal');
+  obj.owner=(($('cf-owner')||{value:''}).value||'').trim();
+  obj.ownerLast=(($('cf-ownerLast')||{value:''}).value||'').trim();
+  obj.ownerPhone=(($('cf-ownerPhone')||{value:''}).value||'').trim();
+  obj.ownerEmail=(($('cf-ownerEmail')||{value:''}).value||'').trim();
+  obj.notes=(($('cf-notes')||{value:''}).value||'').trim();
+  obj.foodTypes=((($('cf-foodTypes')||{value:'wet'}).value||'wet').split(',').map(s=>s.trim()).filter(Boolean));
+  if(!obj.foodTypes.length) obj.foodTypes=['wet'];
+  obj.foodNote=(($('cf-foodNote')||{value:''}).value||'').trim();
+  obj.checkIn=(($('cf-checkIn')||{value:tod()}).value||tod());
+  obj.checkOut=(($('cf-checkOut')||{value:tod()}).value||tod());
+  if(sid) obj.suiteId=sid;
+  if(!existingId) S.cats.push(obj);
+  sv();
+  closeModal();
+  render();
+};
+
 window.openNewCatForSuite=sid=>{
   const su=suite(sid),unhoused=S.cats.filter(c=>!c.suiteId);let html='<div class="sec" style="margin-bottom:14px">Add cat to '+esc(su?su.name:'suite')+'</div>';
   if(unhoused.length){html+='<div style="font-size:13px;font-weight:600;margin-bottom:8px">Assign existing cat</div>';unhoused.forEach(c=>{const col=CM[c.color]||CM['c-teal'];html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f2f2f7;cursor:pointer" onclick="assignCatToSuite(\''+c.id+'\',\''+sid+'\')"><div class="av" style="width:36px;height:36px;flex-shrink:0;background:'+col.bg+';color:'+col.fg+';font-size:13px">'+(c.photo?'<img src="'+c.photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':inits(c.name))+'</div><div style="flex:1"><div style="font-size:14px;font-weight:600">'+esc(c.name)+'</div><div style="font-size:12px;color:#8e8e93">'+esc(c.breed)+'</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>';});html+='<div style="margin-top:14px"></div>';}
@@ -2145,6 +2216,50 @@ function clearCarrierPhoto(catId){
 <!-- Health check photo inputs -->
 <input type="file" id="cam-health" accept="image/*" capture="environment" style="display:none">
 <input type="file" id="lib-health" accept="image/*" style="display:none">
+
+
+<datalist id="cat-colour-suggestions">
+  <option value="Black">
+  <option value="White">
+  <option value="Blue">
+  <option value="Grey">
+  <option value="Cream">
+  <option value="Ginger">
+  <option value="Red">
+  <option value="Chocolate">
+  <option value="Lilac">
+  <option value="Brown tabby">
+  <option value="Grey tabby">
+  <option value="Silver tabby">
+  <option value="Orange tabby">
+  <option value="Tabby">
+  <option value="Tortoiseshell">
+  <option value="Torbie">
+  <option value="Calico">
+  <option value="Black and white">
+  <option value="Blue and white">
+  <option value="Tuxedo">
+  <option value="Bicolour">
+  <option value="Tricolour">
+  <option value="Colourpoint">
+  <option value="Seal point">
+  <option value="Blue point">
+  <option value="Lilac point">
+  <option value="Chocolate point">
+  <option value="Flame point">
+  <option value="Mitted">
+  <option value="Smoke">
+  <option value="Silver">
+  <option value="Shaded silver">
+  <option value="Golden shaded">
+  <option value="Ticked tabby">
+  <option value="Spotted tabby">
+  <option value="Classic tabby">
+  <option value="Mackerel tabby">
+  <option value="Rosetted">
+  <option value="Fawn">
+  <option value="Cinnamon">
+</datalist>
 
 </body>
 </html>
