@@ -851,6 +851,35 @@ window.openHealthAlertsModal=()=>{
   });
   html+='<div style="text-align:right"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>';openModal(html);
 };
+
+function getMonShiftSel(cid){window._monShiftSel=window._monShiftSel||{};return window._monShiftSel[cid]||'';}
+window.setMonShiftSel=(cid,sh)=>{window._monShiftSel=window._monShiftSel||{};window._monShiftSel[cid]=window._monShiftSel[cid]===sh?'':sh;render();};
+function renderTodayMonitoringInHistory(cid){
+  const c=cat(cid);if(!c||!c.admitted)return'';
+  let h='<div class="sec" style="margin-top:14px">Today\'s monitoring</div>';
+  h+='<div class="card" style="margin-bottom:12px">';
+  h+='<div style="font-size:12px;color:#8e8e93;margin-bottom:10px">Select AM or PM to open that shift log. Tap the same shift again to hide it.</div>';
+  const sel=getMonShiftSel(cid);
+  h+='<div style="display:flex;gap:8px;margin-bottom:'+(sel?'12px':'0')+'">'+
+      '<button class="shift-opt am" onclick="setMonShiftSel(\''+c.id+'\',\'AM\')" style="flex:1;'+(sel==='AM'?'box-shadow:0 0 0 2px rgba(15,76,92,.14);':'opacity:.9;')+'">AM</button>'+
+      '<button class="shift-opt pm" onclick="setMonShiftSel(\''+c.id+'\',\'PM\')" style="flex:1;'+(sel==='PM'?'box-shadow:0 0 0 2px rgba(88,86,214,.14);':'opacity:.9;')+'">PM</button>'+
+    '</div>';
+  if(!sel){h+='</div>';return h;}
+  const sh=sel,sl=getSL(c.id,tod(),sh),p=sl.presence,tasks=(c.monitoringTasks||[]).filter(t=>taskOk(t,sh)),meds=medsForShift(c.id,sh),wt=getW(c.id,tod()),complete=isShiftComplete(c.id,tod(),sh);
+  const isCur=sh===curShift();
+  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap"><div style="padding:7px 14px;border-radius:10px;font-weight:700;font-size:14px;background:'+(sh==='AM'?'#e8f4ff':'#f0f0ff')+';color:'+(sh==='AM'?'#0c447c':'#3634a3')+'">'+(sh==='AM'?'&#127749;':'&#127750;')+' '+sh+'</div><span class="pill" style="background:'+(complete?'#c8e6c9':'#fff8e1')+';color:'+(complete?'#1b5e20':'#e65100')+'">'+(complete?'&#10003; Complete':'Needs attention')+'</span>'+(isCur?'<span class="pill" style="background:#e8f4ff;color:#0c447c">Current</span>':'')+'</div>';
+  if(sh==='AM')h+='<div class="log-item"><div class="log-icon">&#9878;&#65039;</div><div style="flex:1;min-width:0"><div class="log-label">Daily weight</div><div class="log-sub">Admission: '+(c.healthCheck?c.healthCheck.weight:'?')+'kg</div></div>'+(wt?'<span class="wt-chip">'+wt.val+'kg</span><button class="btn" onclick="openWeightModal(\''+c.id+'\')" style="margin-left:6px">Edit</button>':'<button class="btn btn-primary" onclick="openWeightModal(\''+c.id+'\')">Enter</button>')+'</div>';
+  [{key:'food',icon:'&#127869;',label:'Food eaten'},{key:'water',icon:'&#128167;',label:'Water drunk'},{key:'urine',icon:'&#128166;',label:'Urinated'},{key:'stool',icon:'&#128169;',label:'Defecated'},{key:'vomit',icon:'&#129314;',label:'Vomited'}].forEach(item=>{
+    const val=p[item.key],isYes=val===true,isNo=val===false,yesAct=item.key==='food'?'logFood(\''+c.id+'\',\''+sh+'\')':item.key==='stool'?'logStool(\''+c.id+'\',\''+sh+'\')':item.key==='vomit'?'logVomit(\''+c.id+'\',\''+sh+'\')':null;
+    h+='<div class="log-item"><div class="log-icon">'+item.icon+'</div><div style="flex:1;min-width:0"><div class="log-label">'+item.label+'</div></div><div class="yn-wrap"><button onclick="'+(yesAct||'setPresence(\''+c.id+'\',\''+item.key+'\',true,\''+sh+'\')')+'" class="yn-btn '+(isYes?'yes':'')+'">Yes</button><button onclick="setPresence(\''+c.id+'\',\''+item.key+'\',false,\''+sh+'\')" class="yn-btn '+(isNo?'no':'')+'">No</button></div></div>';
+  });
+  meds.forEach(m=>{const given=medGiven(c.id,m.id,sh),isCurSh=sh===curShift();h+='<div class="log-item"><div class="log-icon">&#128138;</div><div style="flex:1;min-width:0"><div class="log-label" style="color:#0c447c;font-weight:700">'+esc(m.name)+'</div><div class="log-sub">'+esc(m.dose)+'</div>'+(given?'<div class="log-sub" style="color:#1b5e20">&#10003; Given this '+sh+' shift</div>':'')+'</div>'+(given?'<button class="med-done" disabled>Given</button>':isCurSh?'<button class="med-due" onclick="giveMed(\''+c.id+'\',\''+m.id+'\',\''+sh+'\')">Give</button>':'<button class="med-lock" disabled>'+sh+' only</button>')+'</div>';});
+  tasks.forEach(t=>{const done=sl.tasks[t.id];h+='<div class="log-item"><div class="log-icon">&#9989;</div><div style="flex:1;min-width:0"><div class="log-label">'+esc(t.label)+'</div>'+(done?'<div class="log-sub" style="color:#1b5e20">'+esc(done.by)+' &middot; '+esc(done.time)+'</div>':'')+'</div><span class="chk '+(done?'done':'')+'" onclick="toggleMonTask(\''+c.id+'\',\''+t.id+'\',\''+sh+'\')" style="width:26px;height:26px">'+(done?'<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</span></div>';});
+  h+='<button onclick="saveShift(\''+c.id+'\',\''+sh+'\')" class="btn '+(complete?'btn-primary':'btn-amber')+'" style="width:100%;margin-top:10px;padding:11px;font-size:14px;font-weight:700">'+(complete?'&#10003; Save '+sh+' monitoring':'Save '+sh+' monitoring')+'</button>';
+  h+='</div>';
+  return h;
+}
+
 function renderCatInfo(){
   const all=S.cats;let h=topBar('Cat Info');if(!all.length)return h+'<div class="empty">No cats on record.</div>';
   const cid=selCat||all[0].id;const c=cat(cid);const opts=all.map(x=>'<option value="'+x.id+'" '+(x.id===cid?'selected':'')+'>'+esc(x.name)+(x.admitted?' (Admitted)':'')+'</option>').join('');
@@ -867,25 +896,7 @@ function renderCatInfo(){
   }
   const activeAlerts=(c.alerts||[]).filter(a=>!a.resolved);if(activeAlerts.length){h+='<div class="sec">Alert notes</div>'+renderAlertsHtml(c);}
   h+='<div class="sec">Boarding period</div><div class="card" style="margin-bottom:12px"><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><td style="color:#8e8e93;padding:4px 0;width:105px">Check-in</td><td style="padding:4px 0;font-weight:600">'+fmtLocalDate(c.checkIn)+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Check-out</td><td style="padding:4px 0;font-weight:600">'+fmtLocalDate(c.checkOut)+'</td></tr></table></div>';
-  if(c.admitted){
-    h+='<div class="sec">Today\'s monitoring</div>';
-    ['AM','PM'].forEach(sh=>{
-      const sl=getSL(c.id,tod(),sh),p=sl.presence,tasks=(c.monitoringTasks||[]).filter(t=>taskOk(t,sh)),meds=medsForShift(c.id,sh),wt=getW(c.id,tod()),complete=isShiftComplete(c.id,tod(),sh);
-      const shiftAvailable=sh==='AM'||(sh==='PM'&&new Date().getHours()>=12);if(!shiftAvailable)return;
-      const isCur=sh===curShift();
-      h+='<div style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><div style="padding:7px 14px;border-radius:10px;font-weight:700;font-size:14px;background:'+(sh==='AM'?'#e8f4ff':'#f0f0ff')+';color:'+(sh==='AM'?'#0c447c':'#3634a3')+'">'+(sh==='AM'?'&#127749;':'&#127750;')+' '+sh+'</div><span class="pill" style="background:'+(complete?'#c8e6c9':'#fff8e1')+';color:'+(complete?'#1b5e20':'#e65100')+'">'+(complete?'&#10003; Complete':'Needs attention')+'</span>'+(isCur?'<span class="pill" style="background:#e8f4ff;color:#0c447c">Current</span>':'')+'</div><div class="card" style="padding:4px 12px;margin-bottom:0">';
-      if(sh==='AM')h+='<div class="log-item"><div class="log-icon">&#9878;&#65039;</div><div style="flex:1;min-width:0"><div class="log-label">Daily weight</div><div class="log-sub">Admission: '+(hc?hc.weight:'?')+'kg</div></div>'+(wt?'<span class="wt-chip">'+wt.val+'kg</span><button class="btn" onclick="openWeightModal(\''+c.id+'\')" style="margin-left:6px">Edit</button>':'<button class="btn btn-primary" onclick="openWeightModal(\''+c.id+'\')">Enter</button>')+'</div>';
-      [{key:'food',icon:'&#127869;',label:'Food eaten'},{key:'water',icon:'&#128167;',label:'Water drunk'},{key:'urine',icon:'&#128166;',label:'Urinated'},{key:'stool',icon:'&#128169;',label:'Defecated'},{key:'vomit',icon:'&#129314;',label:'Vomited'}].forEach(item=>{
-        const val=p[item.key],isYes=val===true,isNo=val===false,yesAct=item.key==='food'?'logFood(\''+c.id+'\',\''+sh+'\')':item.key==='stool'?'logStool(\''+c.id+'\',\''+sh+'\')':item.key==='vomit'?'logVomit(\''+c.id+'\',\''+sh+'\')':null;
-        h+='<div class="log-item"><div class="log-icon">'+item.icon+'</div><div style="flex:1;min-width:0"><div class="log-label">'+item.label+'</div></div><div class="yn-wrap"><button onclick="'+(yesAct||'setPresence(\''+c.id+'\',\''+item.key+'\',true,\''+sh+'\')')+'" class="yn-btn '+(isYes?'yes':'')+'">Yes</button><button onclick="setPresence(\''+c.id+'\',\''+item.key+'\',false,\''+sh+'\')" class="yn-btn '+(isNo?'no':'')+'">No</button></div></div>';
-      });
-      meds.forEach(m=>{const given=medGiven(c.id,m.id,sh),isCurSh=sh===curShift();h+='<div class="log-item"><div class="log-icon">&#128138;</div><div style="flex:1;min-width:0"><div class="log-label" style="color:#0c447c;font-weight:700">'+esc(m.name)+'</div><div class="log-sub">'+esc(m.dose)+'</div>'+(given?'<div class="log-sub" style="color:#1b5e20">&#10003; Given this '+sh+' shift</div>':'')+'</div>'+(given?'<button class="med-done" disabled>Given</button>':isCurSh?'<button class="med-due" onclick="giveMed(\''+c.id+'\',\''+m.id+'\',\''+sh+'\')">Give</button>':'<button class="med-lock" disabled>'+sh+' only</button>')+'</div>';});
-      tasks.forEach(t=>{const done=sl.tasks[t.id];h+='<div class="log-item"><div class="log-icon">&#9989;</div><div style="flex:1;min-width:0"><div class="log-label">'+esc(t.label)+'</div>'+(done?'<div class="log-sub" style="color:#1b5e20">'+esc(done.by)+' &middot; '+esc(done.time)+'</div>':'')+'</div><span class="chk '+(done?'done':'')+'" onclick="toggleMonTask(\''+c.id+'\',\''+t.id+'\',\''+sh+'\')" style="width:26px;height:26px">'+(done?'<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</span></div>';});
-      h+='</div><button onclick="saveShift(\''+c.id+'\',\''+sh+'\')" class="btn '+(complete?'btn-primary':'btn-amber')+'" style="width:100%;margin-top:8px;padding:11px;font-size:14px;font-weight:700">'+(complete?'&#10003; '+sh+' shift saved':'Save '+sh+' shift monitoring')+'</button></div>';
-    });
-    h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"><button class="btn" style="background:#fff0f0;color:#cc0000;border-color:#ffb3b3" onclick="openSheet(alertModal(\''+c.id+'\'))">+ Alert</button><button class="btn btn-danger" onclick="openDischarge(\''+c.id+'\')">Discharge</button></div>';
-  }
-  h+='<div class="sec">Monitoring &amp; weight history</div>'+renderShiftTable(c.id)+'<div class="sec" style="margin-top:14px">Notes &amp; photos</div><div class="card" style="margin-bottom:12px">';
+  h+='<div class="sec">Monitoring log history</div><div class="card" style="margin-bottom:12px">'+renderShiftTable(c.id)+'</div>'+renderTodayMonitoringInHistory(c.id)+'<div class="sec" style="margin-top:14px">Notes &amp; photos</div><div class="card" style="margin-bottom:12px">';
   const notes=(c.noteLog||[]).slice().reverse();
   if(notes.length)notes.forEach(n=>{h+='<div style="padding:10px 0;border-bottom:1px solid #f2f2f7"><div style="font-size:10px;color:#8e8e93;margin-bottom:4px">&#128197; '+fmtDT(n.ts)+(n.by?' &middot; '+esc(n.by):'')+'</div>'+(n.text?'<div style="font-size:14px;margin-bottom:'+(n.photo?'6px':'0')+'">'+esc(n.text)+'</div>':'')+(n.photo?'<img src="'+n.photo+'" style="max-width:100%;border-radius:10px;cursor:pointer" onclick="previewImg(\''+n.id+'\')">':'')+'</div>';});
   else h+='<div class="empty" style="padding:14px">No notes yet.</div>';
