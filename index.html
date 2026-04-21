@@ -447,6 +447,42 @@ body{
 
 
 
+
+
+
+.hc-photo-tiles{display:flex;gap:10px;flex-wrap:wrap}
+
+.hc-photo-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.hc-photo-tile{position:relative;width:110px;height:110px;border-radius:16px;overflow:hidden;border:1px solid rgba(23,57,74,.12);background:#f3f4f6;flex:0 0 auto}
+.hc-photo-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.hc-photo-add{width:110px;height:110px;border-radius:16px;border:1px dashed #c7c7cc;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:34px;color:#17394A;flex:0 0 auto}
+
+.hc-photo-wrap{
+  position:relative;display:inline-block;margin-top:8px;
+}
+.hc-photo-delete{
+  position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:999px;
+  border:none;background:rgba(28,28,30,.82);color:#fff;font-size:18px;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+}
+.hc-photo-delete:active{transform:scale(.98)}
+
+.hc-item-photo-preview{
+  width:100%;max-width:180px;height:140px;border-radius:16px;object-fit:cover;display:block;
+  border:1px solid rgba(23,57,74,.12);background:#f3f4f6;margin-top:8px;
+}
+.hc-camera-btn{
+  width:42px;height:42px;border-radius:12px;border:1px solid #d6e4e1;background:#fff;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:20px;line-height:1;
+}
+
+.carrier-photo-preview{
+  width:100%;max-width:180px;height:140px;border-radius:16px;object-fit:cover;display:block;
+  border:1px solid rgba(23,57,74,.12);background:#f3f4f6;margin-top:8px;
+}
+
 .health-photo-preview{
   width:90px;height:90px;border-radius:20px;object-fit:cover;display:block;
   border:1px solid rgba(23,57,74,.12);background:#f3f4f6;
@@ -895,12 +931,27 @@ function renderCatInfo(){
   const hc=c.healthCheck;const dmCol=DC[c.demeanour]||'';
   h+='<div class="card" style="margin-bottom:12px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div style="position:relative">'+avHtml(c,64,20)+'<div class="cam-btn" onclick="_pendPhotoCat=\''+c.id+'\';$(\'cam-profile\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#e8f4ff" stroke-width="2.5"><circle cx="12" cy="13" r="4"/><path d="M5 7h2l2-3h6l2 3h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"/></svg></div></div><div style="flex:1"><div style="font-size:18px;font-weight:700">'+esc(c.name)+(c.demeanour?' <span style="color:'+dmCol+';font-weight:700;font-size:15px">'+DL[c.demeanour]+'</span>':'')+'</div>'+(ownerFull(c)?'<div style="font-size:13px;font-style:italic;color:#555">'+esc(ownerFull(c))+'</div>':'')+'<div style="font-size:13px;color:#8e8e93">'+esc(c.breed)+' &middot; '+esc(c.age)+' yrs</div>'+([c.ownerPhone,c.ownerEmail].filter(Boolean).length?'<div style="font-size:12px;color:#8e8e93">'+esc([c.ownerPhone,c.ownerEmail].filter(Boolean).join(' &middot; '))+'</div>':'')+'</div></div><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><td style="color:#8e8e93;padding:4px 0;width:105px">Food</td><td style="padding:4px 0;font-weight:500">'+esc((c.foodTypes||[]).join(', '))+(c.foodNote?' &mdash; '+esc(c.foodNote):'')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Notes</td><td style="padding:4px 0">'+esc(c.notes||'None')+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Status</td><td style="padding:4px 0;font-weight:600">'+(c.admitted?'<span style="color:#1b5e20">Admitted</span>':'Pending')+'</td></tr>'+(c.admittedAt?'<tr><td style="color:#8e8e93;padding:4px 0">Admitted</td><td style="padding:4px 0">'+fmtDT(c.admittedAt)+'</td></tr>':'')+'</table></div>';
   if(hc&&hc.completed){
-    h+='<div class="sec">Pre-boarding health check</div><div class="card" style="margin-bottom:12px"><table style="width:100%;font-size:13px;border-collapse:collapse">'+[['Admission weight',hc.weight+'kg'],['Demeanour',c.demeanour?'<span style="color:'+dmCol+';font-weight:700">'+DL[c.demeanour]+'</span>':'&mdash;'],['Fleas',hc.fleas?'Yes':'No'],['Flea treated',hc.fleaTreated?'Yes':'No'],['Wormed',hc.wormed?'Yes':'No'],['Health concerns',esc(hc.healthConcerns)],['Microchip',hc.microchip==='none'?'No microchip':esc(hc.microchip)],['Dental',DENTAL_DESC[hc.dental]||'Grade '+hc.dental]].map(([k,v])=>'<tr><td style="color:#8e8e93;padding:4px 0;width:105px;vertical-align:top">'+k+'</td><td style="padding:4px 0;font-weight:500">'+v+'</td></tr>').join('')+'</table></div>';
+    h+='<div class="sec">Pre-boarding health check</div><div class="card" style="margin-bottom:12px"><table style="width:100%;font-size:13px;border-collapse:collapse">'+[['Admission weight',hc.weight+'kg'],['Demeanour',c.demeanour?'<span style="color:'+dmCol+';font-weight:700">'+DL[c.demeanour]+'</span>':'&mdash;'],['Fleas',hc.fleas?'Yes':'No'],['Flea treated',hc.fleaTreated?'Yes':'No'],['Wormed',hc.wormed?'Yes':'No'],['Health concerns',esc(hc.healthConcerns)],['Microchip',hc.microchip==='none'?'No microchip':esc(hc.microchip)],['Dental',DENTAL_DESC[hc.dental]||'Grade '+hc.dental],['Carrier description',esc(((hc.carrier||{}).description)||'')||'&mdash;'],['Personal belongings',esc(((hc.belongings||{}).description)||'')||'&mdash;']].map(([k,v])=>'<tr><td style="color:#8e8e93;padding:4px 0;width:105px;vertical-align:top">'+k+'</td><td style="padding:4px 0;font-weight:500">'+v+'</td></tr>').join('')+'</table>'+((((hc.carrier||{}).photo)||((hc.belongings||{}).photo))?'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">'+(((hc.carrier||{}).photos&&hc.carrier.photos.length?hc.carrier.photos:[((hc.carrier||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Carrier photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Carrier photo '+(i+1)+'"></div>').join(''))+(((hc.belongings||{}).photos&&hc.belongings.photos.length?hc.belongings.photos:[((hc.belongings||{}).photo||'')].filter(Boolean)).map((p,i)=>'<div><div class="helper" style="margin-bottom:6px">Belongings photo '+(i+1)+'</div><img class="hc-item-photo-preview" src="'+p+'" alt="Belongings photo '+(i+1)+'"></div>').join(''))+'</div>':'')+'</div>';
   }
   if(c.medications&&c.medications.length){
     h+='<div class="sec">Medications</div><div class="card" style="padding:4px 13px;margin-bottom:12px">';
     c.medications.forEach(m=>{const active=m.startDate<=tod()&&m.endDate>=tod();h+='<div class="row"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#0c447c">'+esc(m.name)+'</div><div style="font-size:11px;color:#8e8e93">'+(m.details?medLabel(m):esc(m.dose))+' &middot; '+(m.shifts||[]).join(' & ')+' &middot; '+m.startDate+'&rarr;'+m.endDate+(m.notes?' &middot; '+esc(m.notes):'')+'</div></div><span class="pill" style="background:'+(active?'#c8e6c9':'#f2f2f7')+';color:'+(active?'#1b5e20':'#8e8e93')+'">'+(active?'Active':'Done')+'</span></div>';});
-    h+='</div>';
+    h+='</div>'
+
+  const carrier=getCarrierDraft(c.id);
+  h+='<div class="sec" style="margin-top:14px">Carrier description</div>';
+  h+='<div class="card" style="margin-bottom:12px">';
+  h+='<label>Carrier notes</label>';
+  h+='<textarea rows="4" placeholder="Describe the carrier condition, cleanliness, labels, bedding, damage, odour, or anything important..." oninput="setCarrierDescription(\''+c.id+'\',this.value)"'+(carrier.description||'')+'</textarea>';
+  h+='<div class="helper">Add a photo and notes for the carrier at drop-off. This stays in the pre-boarding health check.</div>';
+  h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">';
+  h+='<label class="btn btn-primary" style="display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin:0">Take / add photo<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setCarrierPhoto(\''+c.id+'\',this.files&&this.files[0])"></label>';
+  if(carrier.photo){ h+='<button class="btn" onclick="clearCarrierPhoto(\''+c.id+'\')">Remove photo</button>'; }
+  h+='</div>';
+  if(carrier.photo){ h+='<img class="carrier-photo-preview" src="'+carrier.photo+'" alt="Carrier photo">'; }
+  h+='</div>';
+
+;
   }
   const activeAlerts=(c.alerts||[]).filter(a=>!a.resolved);if(activeAlerts.length){h+='<div class="sec">Alert notes</div>'+renderAlertsHtml(c);}
   h+='<div class="sec">Boarding period</div><div class="card" style="margin-bottom:12px"><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><td style="color:#8e8e93;padding:4px 0;width:105px">Check-in</td><td style="padding:4px 0;font-weight:600">'+fmtLocalDate(c.checkIn)+'</td></tr><tr><td style="color:#8e8e93;padding:4px 0">Check-out</td><td style="padding:4px 0;font-weight:600">'+fmtLocalDate(c.checkOut)+'</td></tr></table></div>';
@@ -1054,8 +1105,9 @@ window.pickHealthPhoto=id=>{
 window.removeHealthPhoto=id=>{const c=cat(id);if(!c)return;c.photo=null;sv();closeSheet();closeModal();openModal(healthCheckModal(id));};
 
 function healthCheckModal(catId){
+  ensureHcMediaDraft(catId);
   const c=cat(catId),hc=c.healthCheck||{},meds=hcDraftMeds(catId);
-  return '<div class="sec" style="margin-bottom:4px">Pre-boarding health check</div><div style="font-size:12px;color:#8e8e93;margin-bottom:12px">'+esc(c.name)+' &middot; All fields required</div><div style="display:grid;gap:11px"><div><label>Admission weight (kg) *</label><input id="hc-wt" type="number" step="0.01" placeholder="e.g. 4.5" value="'+(hc.weight||'')+'"></div><div><label>Demeanour *</label><div style="display:flex;gap:7px;margin-top:5px">'+['friendly','anxious','caution'].map(d=>'<div class="demean-btn '+(hc.demeanour===d?'sel-'+d:'')+'" onclick="selDemean(\''+d+'\')" id="db-'+d+'"><span style="font-size:20px">&#128049;</span><span style="font-size:11px;font-weight:700;color:'+DC[d]+'">'+DL[d]+'</span></div>').join('')+'</div><input type="hidden" id="hc-demean" value="'+(hc.demeanour||'')+'"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">'+['fleas','flea-tx','wormed'].map((id2,i)=>'<div><label>'+['Fleas?','Flea treated?','Wormed?'][i]+'</label><select id="hc-'+id2+'"><option value="">Select</option><option value="yes" '+([hc.fleas,hc.fleaTreated,hc.wormed][i]===true?'selected':'')+'>Yes</option><option value="no" '+([hc.fleas,hc.fleaTreated,hc.wormed][i]===false?'selected':'')+'>No</option></select></div>').join('')+'</div><div><label>Health concerns *</label><textarea id="hc-concerns" rows="2" placeholder="None, or describe&#8230;" style="resize:vertical">'+esc(hc.healthConcerns||'')+'</textarea></div><div><label>Microchip</label><select id="hc-micro-type" onchange="toggleMicroInput()" style="margin-bottom:6px"><option value="">Select</option><option value="yes" '+(hc.microchip&&hc.microchip!=='none'?'selected':'')+'>Yes &mdash; add number</option><option value="none" '+(hc.microchip==='none'?'selected':'')+'>No microchip</option></select><input id="hc-micro-num" placeholder="Microchip number" value="'+(hc.microchip&&hc.microchip!=='none'?esc(hc.microchip):'')+'" style="'+(hc.microchip&&hc.microchip!=='none'?'':'display:none')+'"></div><div><label>Dental grade *</label><div style="font-size:11px;color:#8e8e93;margin-bottom:7px">0 = healthy &middot; 4 = severe</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">'+[0,1,2,3,4].map(g=>'<div class="dental-btn '+(hc.dental===g?'sel':'')+'" onclick="selDental('+g+')" id="dg-'+g+'"><div style="font-size:17px;font-weight:700">'+g+'</div><div style="font-size:8px;color:#8e8e93;margin-top:2px">'+['None','Mild','Mod.','Heavy','Severe'][g]+'</div></div>').join('')+'</div><input type="hidden" id="hc-dental" value="'+(hc.dental!==undefined?hc.dental:'')+'"></div><div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><label style="margin:0">Medications</label><button onclick="addHcMed(\''+catId+'\')" class="btn" style="padding:4px 10px;font-size:12px">+ Add</button></div><div style="font-size:12px;color:#8e8e93;margin-bottom:8px">Add medication inline. Choose the shift it belongs to and it will appear in that shift monitoring log and history.</div>'+(meds.length?meds.map((m,i)=>'<div style="background:#f7fbfa;border:1px solid #d6e4e1;border-radius:12px;padding:10px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;color:#17394A">Medication '+(i+1)+'</div><button onclick="removeHcMed(\''+catId+'\',\''+m.id+'\')" style="color:#ff6f61;background:none;border:none;font-size:18px;cursor:pointer">&times;</button></div><label style="margin-bottom:6px">Medication details</label><textarea id="hc-med-details-'+m.id+'" rows="3" placeholder="e.g. Gabapentin 50mg capsule — give with food" style="resize:vertical;margin-bottom:8px">'+esc(m.details||(((m.name||'')+((m.dose||'')?' — '+m.dose:'')).trim()))+'</textarea><div><label>Administer at shift</label><div style="display:flex;gap:10px;margin-top:5px;margin-bottom:8px">'+['AM','PM'].map(s=>'<div class="cb-row" onclick="toggleHcMedShift(\''+catId+'\',\''+m.id+'\',\''+s+'\')" style="cursor:pointer"><div class="cb-box '+((m.shifts||[]).includes(s)?'checked':'')+'" id="hc-med-cb-'+m.id+'-'+s+'">'+((m.shifts||[]).includes(s)?'✓':s)+'</div><span style="font-size:14px">'+s+' shift</span></div>').join('')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>Start</label><input id="hc-med-start-'+m.id+'" type="date" value="'+(m.startDate||c.checkIn||tod())+'"></div><div><label>Until</label><input id="hc-med-end-'+m.id+'" type="date" value="'+(m.endDate||c.checkOut||tod())+'"></div></div><input id="hc-med-notes-'+m.id+'" placeholder="Notes (optional)" value="'+esc(m.notes||'')+'" style="margin-top:8px"></div>').join(''):'<div class="helper" style="margin-top:0">No medications added.</div>')+'</div></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveHealthCheck(\''+catId+'\')" style="font-size:15px;font-weight:700;padding:10px 20px">Save &amp; admit</button></div>';
+  return '<div class="sec" style="margin-bottom:4px">Pre-boarding health check</div><div style="font-size:12px;color:#8e8e93;margin-bottom:12px">'+esc(c.name)+' &middot; All fields required</div><div style="display:grid;gap:11px"><div><label>Admission weight (kg) *</label><input id="hc-wt" type="number" step="0.01" placeholder="e.g. 4.5" value="'+(hc.weight||'')+'"></div><div><label>Demeanour *</label><div style="display:flex;gap:7px;margin-top:5px">'+['friendly','anxious','caution'].map(d=>'<div class="demean-btn '+(hc.demeanour===d?'sel-'+d:'')+'" onclick="selDemean(\''+d+'\')" id="db-'+d+'"><span style="font-size:20px">&#128049;</span><span style="font-size:11px;font-weight:700;color:'+DC[d]+'">'+DL[d]+'</span></div>').join('')+'</div><input type="hidden" id="hc-demean" value="'+(hc.demeanour||'')+'"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">'+['fleas','flea-tx','wormed'].map((id2,i)=>'<div><label>'+['Fleas?','Flea treated?','Wormed?'][i]+'</label><select id="hc-'+id2+'"><option value="">Select</option><option value="yes" '+([hc.fleas,hc.fleaTreated,hc.wormed][i]===true?'selected':'')+'>Yes</option><option value="no" '+([hc.fleas,hc.fleaTreated,hc.wormed][i]===false?'selected':'')+'>No</option></select></div>').join('')+'</div><div><label>Health concerns *</label><textarea id="hc-concerns" rows="2" placeholder="None, or describe&#8230;" style="resize:vertical">'+esc(hc.healthConcerns||'')+'</textarea></div><div><label>Microchip</label><select id="hc-micro-type" onchange="toggleMicroInput()" style="margin-bottom:6px"><option value="">Select</option><option value="yes" '+(hc.microchip&&hc.microchip!=='none'?'selected':'')+'>Yes &mdash; add number</option><option value="none" '+(hc.microchip==='none'?'selected':'')+'>No microchip</option></select><input id="hc-micro-num" placeholder="Microchip number" value="'+(hc.microchip&&hc.microchip!=='none'?esc(hc.microchip):'')+'" style="'+(hc.microchip&&hc.microchip!=='none'?'':'display:none')+'"></div><div><label>Dental grade *</label><div style="font-size:11px;color:#8e8e93;margin-bottom:7px">0 = healthy &middot; 4 = severe</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">'+[0,1,2,3,4].map(g=>'<div class="dental-btn '+(hc.dental===g?'sel':'')+'" onclick="selDental('+g+')" id="dg-'+g+'"><div style="font-size:17px;font-weight:700">'+g+'</div><div style="font-size:8px;color:#8e8e93;margin-top:2px">'+['None','Mild','Mod.','Heavy','Severe'][g]+'</div></div>').join('')+'</div><input type="hidden" id="hc-dental" value="'+(hc.dental!==undefined?hc.dental:'')+'"></div><div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><label style="margin:0">Medications</label><button onclick="addHcMed(\''+catId+'\')" class="btn" style="padding:4px 10px;font-size:12px">+ Add</button></div><div style="font-size:12px;color:#8e8e93;margin-bottom:8px">Add medication inline. Choose the shift it belongs to and it will appear in that shift monitoring log and history.</div>'+(meds.length?meds.map((m,i)=>'<div style="background:#f7fbfa;border:1px solid #d6e4e1;border-radius:12px;padding:10px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;color:#17394A">Medication '+(i+1)+'</div><button onclick="removeHcMed(\''+catId+'\',\''+m.id+'\')" style="color:#ff6f61;background:none;border:none;font-size:18px;cursor:pointer">&times;</button></div><label style="margin-bottom:6px">Medication details</label><textarea id="hc-med-details-'+m.id+'" rows="3" placeholder="e.g. Gabapentin 50mg capsule — give with food" style="resize:vertical;margin-bottom:8px">'+esc(m.details||(((m.name||'')+((m.dose||'')?' — '+m.dose:'')).trim()))+'</textarea><div><label>Administer at shift</label><div style="display:flex;gap:10px;margin-top:5px;margin-bottom:8px">'+['AM','PM'].map(s=>'<div class="cb-row" onclick="toggleHcMedShift(\''+catId+'\',\''+m.id+'\',\''+s+'\')" style="cursor:pointer"><div class="cb-box '+((m.shifts||[]).includes(s)?'checked':'')+'" id="hc-med-cb-'+m.id+'-'+s+'">'+((m.shifts||[]).includes(s)?'✓':s)+'</div><span style="font-size:14px">'+s+' shift</span></div>').join('')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>Start</label><input id="hc-med-start-'+m.id+'" type="date" value="'+(m.startDate||c.checkIn||tod())+'"></div><div><label>Until</label><input id="hc-med-end-'+m.id+'" type="date" value="'+(m.endDate||c.checkOut||tod())+'"></div></div><input id="hc-med-notes-'+m.id+'" placeholder="Notes (optional)" value="'+esc(m.notes||'')+'" style="margin-top:8px"></div>').join(''):'<div class="helper" style="margin-top:0">No medications added.</div>')+'</div></div><div class="sec" style="margin-top:14px">Carrier description</div><div class="card" style="margin-bottom:12px"><label>Carrier description</label><textarea id="hc-carrier-desc" rows="3" placeholder="Describe the carrier, condition, cleanliness, bedding, labels, damage, odour, or anything important..." style="resize:vertical">'+esc(((hc.carrier&&hc.carrier.description)||''))+'</textarea><div id="hc-carrier-photos" class="hc-photo-grid">'+((((cat(catId)||{})._hcMediaDraft||{}).carrier||{}).photos||[]).map((p,i)=>'<div class="hc-photo-tile"><img src="'+p+'" alt="Carrier photo '+(i+1)+'"><button type="button" class="hc-photo-delete" onclick="clearHcExtraPhoto(\\\''+catId+'\\\',\\\'carrier\\\','+i+')">×</button></div>').join('')+'<label class="hc-photo-add" title="Add carrier photo">+<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setHcExtraPhoto(\''+catId+'\',\'carrier\',this.files&&this.files[0]);this.value=\'\'"></label></div><div class="helper">Attach a photo from camera roll or take a new photo.</div><div class="sec" style="margin-top:14px">Personal belongings</div><div class="card" style="margin-bottom:12px"><label>Personal belongings</label><textarea id="hc-belongings-desc" rows="3" placeholder="List belongings brought in, such as food, toys, bedding, medication, bowls, or other items..." style="resize:vertical">'+esc(((hc.belongings&&hc.belongings.description)||''))+'</textarea><div id="hc-belongings-photos" class="hc-photo-grid">'+((((cat(catId)||{})._hcMediaDraft||{}).belongings||{}).photos||[]).map((p,i)=>'<div class="hc-photo-tile"><img src="'+p+'" alt="Belongings photo '+(i+1)+'"><button type="button" class="hc-photo-delete" onclick="clearHcExtraPhoto(\\\''+catId+'\\\',\\\'belongings\\\','+i+')">×</button></div>').join('')+'<label class="hc-photo-add" title="Add belongings photo">+<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setHcExtraPhoto(\''+catId+'\',\'belongings\',this.files&&this.files[0]);this.value=\'\'"></label></div><div class="helper">Attach a photo from camera roll or take a new photo.</div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveHealthCheck(\''+catId+'\')" style="font-size:15px;font-weight:700;padding:10px 20px">Save &amp; admit</button></div>';
 }
 window.selDemean=d=>{['friendly','anxious','caution'].forEach(x=>{const el=$('db-'+x);if(el)el.className='demean-btn '+(x===d?'sel-'+x:'');});const hi=$('hc-demean');if(hi)hi.value=d;};
 window.toggleMicroInput=()=>{const t=($('hc-micro-type')||{value:''}).value;const inp=$('hc-micro-num');if(inp)inp.style.display=t==='yes'?'':'none';};
@@ -1071,7 +1123,16 @@ for(const m of draftMeds){
 }
 c.medications=draftMeds.map(m=>({id:m.id,name:m.details,dose:'',details:m.details,shifts:m.shifts,startDate:m.startDate,endDate:m.endDate,notes:m.notes}));
 _hcMedDrafts[catId]=cloneHcMeds(c.medications);
-c.healthCheck={weight:wt,demeanour:dem,fleas:fleas==='yes',fleaTreated:fTx==='yes',wormed:worm==='yes',healthConcerns:con,microchip:mT==='none'?'none':mN,dental:parseInt(dent),completed:true};c.demeanour=dem;c.admitted=true;c.admittedAt=nowISO();sv();closeModal();render();};
+const carrierDesc=(($('hc-carrier-desc')||{value:''}).value||'').trim();
+const belongingsDesc=(($('hc-belongings-desc')||{value:''}).value||'').trim();
+const mediaDraft=ensureHcMediaDraft(catId)||{carrier:{photos:[]},belongings:{photos:[]}};
+const existingCarrier=((c.healthCheck&&c.healthCheck.carrier)||((c.preBoardingHealthCheck||{}).carrier)||{description:'',photo:'',photos:[]});
+const existingBelongings=((c.healthCheck&&c.healthCheck.belongings)||((c.preBoardingHealthCheck||{}).belongings)||{description:'',photo:'',photos:[]});
+const carrierPhotos=((mediaDraft.carrier&&mediaDraft.carrier.photos)||existingCarrier.photos||((existingCarrier.photo||'')?[existingCarrier.photo]:[])).slice();
+const belongingsPhotos=((mediaDraft.belongings&&mediaDraft.belongings.photos)||existingBelongings.photos||((existingBelongings.photo||'')?[existingBelongings.photo]:[])).slice();
+c.healthCheck={weight:wt,demeanour:dem,fleas:fleas==='yes',fleaTreated:fTx==='yes',wormed:worm==='yes',healthConcerns:con,microchip:mT==='none'?'none':mN,dental:parseInt(dent),carrier:{description:carrierDesc,photo:carrierPhotos[0]||'',photos:carrierPhotos},belongings:{description:belongingsDesc,photo:belongingsPhotos[0]||'',photos:belongingsPhotos},completed:true};
+c.preBoardingHealthCheck=JSON.parse(JSON.stringify(c.healthCheck));
+delete c._hcMediaDraft;c.demeanour=dem;c.admitted=true;c.admittedAt=nowISO();sv();closeModal();render();};
 let _shiftCbs={AM:false,PM:false};
 function addMedSheet(catId,fromHC){_shiftCbs={AM:false,PM:false};return '<div class="sec" style="margin-bottom:12px">Add medication</div><div style="display:grid;gap:10px"><input id="med-name" placeholder="Medication name *"><input id="med-dose" placeholder="Dose *"><div><label>Administer at shift</label><div style="display:flex;gap:10px;margin-top:5px">'+['AM','PM'].map(s=>'<div class="cb-row" onclick="toggleShiftCb(\''+s+'\')" style="cursor:pointer"><div class="cb-box" id="cb-'+s+'">'+s+'</div><span style="font-size:14px">'+s+' shift</span></div>').join('')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label>Start *</label><input id="med-start" type="date" value="'+tod()+'"></div><div><label>Until *</label><input id="med-end" type="date" value="'+tod()+'"></div></div><input id="med-notes" placeholder="Notes (optional)"></div><div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px"><button class="btn" onclick="closeSheet()'+(fromHC?';openModal(healthCheckModal(\''+catId+'\'))':'')+'">Cancel</button><button class="btn btn-primary" onclick="saveMedEntry(\''+catId+'\','+!!fromHC+')">Add</button></div>';}
 window.toggleShiftCb=s=>{_shiftCbs[s]=!_shiftCbs[s];const el=$('cb-'+s);if(el){el.className='cb-box '+(_shiftCbs[s]?'checked':'');el.textContent=_shiftCbs[s]?'✓':s;}};
@@ -1566,7 +1627,7 @@ async function generateDischargePDF(cat, opts={}){
       return pdfObj.output('blob');
     }
 
-    await worker.save();
+    await worker.sv();
     return true;
   }catch(err){
     console.error('PDF generation failed:', err);
@@ -1726,6 +1787,134 @@ window.confirmAnnouncementRead=function(){
 };
 
 setupPhotoHandlers();render();bootStartupFlow();
+
+
+
+
+
+
+function handleHcPhotoInput(ev,catId,key){
+  const file=ev&&ev.target&&ev.target.files&&ev.target.files[0];
+  if(!file) return;
+  setHcExtraPhoto(catId,key,file);
+  try{ ev.target.value=''; }catch(e){}
+}
+function renderHcPhotoTiles(catId,key){
+  const draft=ensureHcMediaDraft(catId);
+  const el=$('hc-'+key+'-photos');
+  if(!draft || !draft[key] || !el) return;
+  const photos=Array.isArray(draft[key].photos)?draft[key].photos:[];
+  const label=(key==='carrier'?'Carrier':'Belongings');
+  el.innerHTML =
+    photos.map((p,i)=>
+      '<div class="hc-photo-tile">'+
+        '<img src="'+p+'" alt="'+label+' photo '+(i+1)+'">'+
+        '<button type="button" class="hc-photo-delete" onclick="clearHcExtraPhoto(\''+catId+'\',\''+key+'\','+i+')">×</button>'+
+      '</div>'
+    ).join('') +
+    '<label class="hc-photo-add" title="Add '+label.toLowerCase()+' photo">+'+
+      '<input type="file" accept="image/*" capture="environment" style="display:none" onchange="setHcExtraPhoto(\''+catId+'\',\''+key+'\',this.files&&this.files[0]);this.value=\'\'">'+
+    '</label>';
+}
+function ensureHcMediaDraft(catId){
+  const c=cat(catId); if(!c) return null;
+  const carrierSaved=((c.preBoardingHealthCheck||{}).carrier)||((c.healthCheck||{}).carrier)||{};
+  const belongingsSaved=((c.preBoardingHealthCheck||{}).belongings)||((c.healthCheck||{}).belongings)||{};
+  if(!c._hcMediaDraft) c._hcMediaDraft={
+    carrier:{photos:(carrierSaved.photos&&carrierSaved.photos.length?carrierSaved.photos.slice():((carrierSaved.photo||'')?[carrierSaved.photo]:[]))},
+    belongings:{photos:(belongingsSaved.photos&&belongingsSaved.photos.length?belongingsSaved.photos.slice():((belongingsSaved.photo||'')?[belongingsSaved.photo]:[]))}
+  };
+  if(!c._hcMediaDraft.carrier) c._hcMediaDraft.carrier={photos:[]};
+  if(!Array.isArray(c._hcMediaDraft.carrier.photos)) c._hcMediaDraft.carrier.photos=[];
+  if(!c._hcMediaDraft.belongings) c._hcMediaDraft.belongings={photos:[]};
+  if(!Array.isArray(c._hcMediaDraft.belongings.photos)) c._hcMediaDraft.belongings.photos=[];
+  return c._hcMediaDraft;
+}
+
+function ensureHcExtraFields(catId){
+  const c=cat(catId); if(!c) return null;
+  if(!c.preBoardingHealthCheck) c.preBoardingHealthCheck={};
+  if(!c.healthCheck) c.healthCheck={};
+  if(!c.preBoardingHealthCheck.carrier) c.preBoardingHealthCheck.carrier={description:'',photo:'',photos:[]};
+  if(!c.preBoardingHealthCheck.belongings) c.preBoardingHealthCheck.belongings={description:'',photo:'',photos:[]};
+  if(!c.healthCheck.carrier) c.healthCheck.carrier={description:'',photo:'',photos:[]};
+  if(!c.healthCheck.belongings) c.healthCheck.belongings={description:'',photo:'',photos:[]};
+  if(!Array.isArray(c.preBoardingHealthCheck.carrier.photos)) c.preBoardingHealthCheck.carrier.photos=c.preBoardingHealthCheck.carrier.photo?[c.preBoardingHealthCheck.carrier.photo]:[];
+  if(!Array.isArray(c.preBoardingHealthCheck.belongings.photos)) c.preBoardingHealthCheck.belongings.photos=c.preBoardingHealthCheck.belongings.photo?[c.preBoardingHealthCheck.belongings.photo]:[];
+  if(!Array.isArray(c.healthCheck.carrier.photos)) c.healthCheck.carrier.photos=c.healthCheck.carrier.photo?[c.healthCheck.carrier.photo]:[];
+  if(!Array.isArray(c.healthCheck.belongings.photos)) c.healthCheck.belongings.photos=c.healthCheck.belongings.photo?[c.healthCheck.belongings.photo]:[];
+  return c;
+}
+function setHcExtraPhoto(catId,key,file){
+  if(!file) return;
+  const c=ensureHcExtraFields(catId); if(!c) return;
+  const draft=ensureHcMediaDraft(catId); if(!draft) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const v=e.target.result||'';
+    draft[key].photos.push(v);
+    c.preBoardingHealthCheck[key].photos=draft[key].photos.slice();
+    c.preBoardingHealthCheck[key].photo=draft[key].photos[0]||'';
+    c.healthCheck[key].photos=draft[key].photos.slice();
+    c.healthCheck[key].photo=draft[key].photos[0]||'';
+    sv();
+    renderHcPhotoTiles(catId,key);
+  };
+  reader.readAsDataURL(file);
+}
+function clearHcExtraPhoto(catId,key,idx){
+  const c=ensureHcExtraFields(catId); if(!c) return;
+  const draft=ensureHcMediaDraft(catId); if(!draft) return;
+  draft[key].photos.splice(idx,1);
+  c.preBoardingHealthCheck[key].photos=draft[key].photos.slice();
+  c.preBoardingHealthCheck[key].photo=draft[key].photos[0]||'';
+  c.healthCheck[key].photos=draft[key].photos.slice();
+  c.healthCheck[key].photo=draft[key].photos[0]||'';
+  sv();
+  renderHcPhotoTiles(catId,key);
+}
+
+function getCarrierDraft(catId){
+  const c=cat(catId)||{};
+  if(!c.preBoardingHealthCheck)c.preBoardingHealthCheck={};
+  if(!c.preBoardingHealthCheck.carrier)c.preBoardingHealthCheck.carrier={description:'',photo:''};
+  return c.preBoardingHealthCheck.carrier;
+}
+function setCarrierDescription(catId,val){
+  const c=cat(catId); if(!c) return;
+  if(!c.preBoardingHealthCheck)c.preBoardingHealthCheck={};
+  if(!c.preBoardingHealthCheck.carrier)c.preBoardingHealthCheck.carrier={description:'',photo:''};
+  c.preBoardingHealthCheck.carrier.description=val||'';
+  if(!c.healthCheck)c.healthCheck={};
+  if(!c.healthCheck.carrier)c.healthCheck.carrier={description:'',photo:''};
+  c.healthCheck.carrier.description=val||'';
+  sv(); render();
+}
+function setCarrierPhoto(catId,file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const c=cat(catId); if(!c) return;
+    if(!c.preBoardingHealthCheck)c.preBoardingHealthCheck={};
+    if(!c.preBoardingHealthCheck.carrier)c.preBoardingHealthCheck.carrier={description:'',photo:''};
+    c.preBoardingHealthCheck.carrier.photo=e.target.result||'';
+    if(!c.healthCheck)c.healthCheck={};
+    if(!c.healthCheck.carrier)c.healthCheck.carrier={description:'',photo:''};
+    c.healthCheck.carrier.photo=e.target.result||'';
+    sv(); render();
+  };
+  reader.readAsDataURL(file);
+}
+function clearCarrierPhoto(catId){
+  const c=cat(catId); if(!c) return;
+  if(!c.preBoardingHealthCheck)c.preBoardingHealthCheck={};
+  if(!c.preBoardingHealthCheck.carrier)c.preBoardingHealthCheck.carrier={description:'',photo:''};
+  c.preBoardingHealthCheck.carrier.photo='';
+  if(!c.healthCheck)c.healthCheck={};
+  if(!c.healthCheck.carrier)c.healthCheck.carrier={description:'',photo:''};
+  c.healthCheck.carrier.photo='';
+  sv(); render();
+}
 
 </script>
 
