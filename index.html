@@ -556,6 +556,9 @@ body{
   font-size:13px;
   font-weight:600;
 }
+
+.dc-photo-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.dc-photo-grid img{width:110px;height:110px;object-fit:cover;border-radius:12px;border:1px solid rgba(23,57,74,.12);background:#f3f4f6}
 </style>
 </head>
 <body class="startup-lock">
@@ -1094,7 +1097,58 @@ window.openNewCatForSuite=sid=>{
   html+='<button class="btn btn-primary" onclick="closeModal();openModal(catFormModal(null,\''+sid+'\'))" style="width:100%;padding:12px;font-size:14px;font-weight:600">+ Add new cat profile</button><button class="btn" onclick="closeModal()" style="width:100%;padding:10px;margin-top:8px">Cancel</button>';openModal(html);
 };
 window.assignCatToSuite=(catId,sid)=>{const c=cat(catId),su=suite(sid);if(!c||!su)return;c.suiteId=sid;sv();closeModal();render();};
-window.openDischarge=id=>{if(!S.currentStaff){alert('Sign in first.');return;}const c=cat(id);if(!c)return;const email=c.ownerEmail||((S.settings&&S.settings.defaultEmail)||DEMAIL);openSheet('<div class="sec" style="margin-bottom:8px">Discharge '+esc(c.name)+'</div><p style="color:#8e8e93;font-size:14px;margin-bottom:10px">Full PDF report can be downloaded or prepared for email. Summary for: <strong>'+esc(email)+'</strong></p><p style="color:#ff3b30;font-size:12px;margin-bottom:14px">&#9888; Cat will be archived after discharge.</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="btn" onclick="closeSheet()">Cancel</button><button class="btn" onclick="closeSheet();window.generatePDF(cat(\''+id+'\'),false)" style="background:#e8f4ff;color:#0c447c;border-color:#b5d4f4">Download PDF</button><button class="btn" onclick="closeSheet();window.emailPDF(cat(\''+id+'\'),false)" style="background:#fff8e1;color:#8a5500;border-color:#ffd27a">Email-ready PDF</button><button class="btn btn-danger" onclick="confirmDischarge(\''+id+'\')">Discharge &amp; PDF</button></div>');};
+
+function dischargePbPhotos(obj){
+  if(!obj) return [];
+  if(Array.isArray(obj.photos) && obj.photos.length) return obj.photos;
+  if(obj.photo) return [obj.photo];
+  return [];
+}
+function hasOwnerProvidedFood(c){
+  const hc=(c&&c.preBoardingHealthCheck)||{};
+  return !!(
+    hc.ownerProvidedFood===true || hc.ownerProvidedFood==='yes' ||
+    c.ownerProvidedFood===true || c.ownerProvidedFood==='yes' ||
+    c.foodOwnerProvided===true || c.foodOwnerProvided==='yes' ||
+    c.foodProvidedByOwner===true || c.foodProvidedByOwner==='yes'
+  );
+}
+function renderDischargePbSections(c){
+  const hc=(c&&c.preBoardingHealthCheck)||{};
+  const carrier=hc.carrier||{};
+  const belongings=hc.belongings||{};
+  let h='';
+
+  h+='<div class="sec" style="margin-top:14px">Carrier</div>';
+  h+='<div class="card" style="margin-bottom:12px">';
+  h+=carrier.description
+    ? '<div style="font-size:14px;color:#17394A;line-height:1.45">'+esc(carrier.description)+'</div>'
+    : '<div style="font-size:14px;color:#8e8e93;line-height:1.45">No carrier description recorded.</div>';
+  const carrierPhotos=dischargePbPhotos(carrier);
+  if(carrierPhotos.length){
+    h+='<div class="dc-photo-grid">'+carrierPhotos.map((p,i)=>'<img src="'+p+'" alt="Carrier photo '+(i+1)+'">').join('')+'</div>';
+  }
+  h+='</div>';
+
+  h+='<div class="sec" style="margin-top:14px">Belongings</div>';
+  h+='<div class="card" style="margin-bottom:12px">';
+  h+=belongings.description
+    ? '<div style="font-size:14px;color:#17394A;line-height:1.45">'+esc(belongings.description)+'</div>'
+    : '<div style="font-size:14px;color:#8e8e93;line-height:1.45">No belongings description recorded.</div>';
+  const belongingsPhotos=dischargePbPhotos(belongings);
+  if(belongingsPhotos.length){
+    h+='<div class="dc-photo-grid">'+belongingsPhotos.map((p,i)=>'<img src="'+p+'" alt="Belongings photo '+(i+1)+'">').join('')+'</div>';
+  }
+  h+='</div>';
+
+  if(hasOwnerProvidedFood(c)){
+    h+='<div class="sec" style="margin-top:14px">Food</div>';
+    h+='<div class="card" style="margin-bottom:12px"><div style="font-size:14px;color:#17394A;line-height:1.45">Owner provided food.</div></div>';
+  }
+  return h;
+}
+
+window.openDischarge=id=>{if(!S.currentStaff){alert('Sign in first.');return;}const c=cat(id);if(!c)return;const email=c.ownerEmail||((S.settings&&S.settings.defaultEmail)||DEMAIL);openSheet('<div class="sec" style="margin-bottom:8px">Discharge '+esc(c.name)+'</div><p style="color:#8e8e93;font-size:14px;margin-bottom:10px">Full PDF report can be downloaded or prepared for email. Summary for: <strong>'+esc(email)+'</strong></p><p style="color:#ff3b30;font-size:12px;margin-bottom:14px">&#9888; Cat will be archived after discharge.</p>'+renderDischargePbSections(c)+'<div style=\"display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end\"><button class="btn" onclick="closeSheet()">Cancel</button><button class="btn" onclick="closeSheet();window.generatePDF(cat(\''+id+'\'),false)" style="background:#e8f4ff;color:#0c447c;border-color:#b5d4f4">Download PDF</button><button class="btn" onclick="closeSheet();window.emailPDF(cat(\''+id+'\'),false)" style="background:#fff8e1;color:#8a5500;border-color:#ffd27a">Email-ready PDF</button><button class="btn btn-danger" onclick="confirmDischarge(\''+id+'\')">Discharge &amp; PDF</button></div>');};
 window.confirmDischarge=async id=>{const c=cat(id);if(!c)return;try{await window.generatePDF(c,true);}catch(e){console.error(e);}upsertArchivedCatRecord(c);closeSheet();S.cats=S.cats.filter(x=>x.id!==id);if(selCat===id)selCat=null;sv();render();};
 function renderTasks(){let h=topBar('Tasks');h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div class="sec" style="margin-bottom:0">Facility tasks</div>'+(isAdmin()?'<button class="btn btn-primary" onclick="addFacilityTask()">+ Add</button>':'')+'</div><div class="card" style="padding:4px 13px">';if(!S.tasks||!S.tasks.length)h+='<div class="empty" style="padding:14px">No tasks. Admin can add.</div>';(S.tasks||[]).forEach(t=>{h+='<div class="row"><div style="display:flex;align-items:center;gap:11px;flex:1"><span class="chk '+(t.done?'done':'')+'" onclick="toggleTask(\''+t.id+'\')">'+(t.done?'<svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</span><div><div style="font-size:15px;'+(t.done?'text-decoration:line-through;color:#c7c7cc':'')+'">'+(t.label||'')+'</div><div style="font-size:12px;color:#8e8e93">'+(t.freq||'')+(t.doneBy?' &middot; '+t.doneBy+' '+t.doneAt:'')+'</div></div></div>'+(isAdmin()?'<button class="btn" onclick="deleteTask(\''+t.id+'\')" style="padding:4px 9px;color:#ff3b30;border-color:#ffb3b3">&times;</button>':'')+'</div>';});h+='</div>';return h;}
 window.toggleTask=id=>{if(!S.currentStaff){alert('Sign in first.');return;}const t=(S.tasks||[]).find(x=>x.id===id);if(!t)return;t.done=!t.done;t.doneAt=t.done?nowT():null;t.doneBy=t.done?S.currentStaff:null;sv();render();};
